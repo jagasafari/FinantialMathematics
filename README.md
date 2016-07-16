@@ -1,0 +1,2 @@
+# FinantialMathematics
+fsharp playground
