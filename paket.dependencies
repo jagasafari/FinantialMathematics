@@ -1,0 +1,5 @@
+source https://www.nuget.org/api/v2
+nuget FsUnit
+nuget FsUnit.xUnit
+nuget Unquote
+nuget xunit
