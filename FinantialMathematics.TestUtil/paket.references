@@ -1,2 +1,4 @@
-xunit
 Unquote
+xunit
+FsCheck
+FsCheck.Xunit

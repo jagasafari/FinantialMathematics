@@ -1,4 +1,7 @@
 source https://www.nuget.org/api/v2
+nuget FsCheck
+nuget FsCheck.Xunit
+nuget FSharp.Data
 nuget FsUnit
 nuget FsUnit.xUnit
 nuget Unquote

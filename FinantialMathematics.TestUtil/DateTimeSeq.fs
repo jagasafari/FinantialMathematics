@@ -6,13 +6,7 @@ let incByOne pred =
 
 let increaseRandomly (dt:DateTime) =
     let rnd = Random()
-    let m = 27
-    let incd = ( dt.Day + rnd.Next(1, m) ) % m + 1
-    let im = ( dt.Day > incd ) |> incByOne
-    let incm =
-        ( dt.Month + im ) % 13 |> fun x -> if x = 0 then x + 1 else x
-    let iy = (dt.Month > incm) |> incByOne
-    DateTime(dt.Year + iy, incm, incd)
+    dt.AddDays(float (rnd.Next(1,27)))
 
 let getIncreasingDateTimeSeqFromNow n =
     if n = 0 then invalidArg "n" "must not be zero"

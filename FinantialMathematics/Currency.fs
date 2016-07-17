@@ -1,26 +1,27 @@
 ﻿module FinantilaMathematics.Currency
 
-type RateToUsd = decimal
+open LatestExchangeRates
 
-type Currency =
-    | Usd of RateToUsd
-    | Eur of RateToUsd
-    | Pln of RateToUsd
+type Currency = | Usd | Eur| Pln | Ypy | Gbp
 
 type Money = decimal * Currency
 
-let rate (currency:Currency) =
+let rateToUsdTable currency =
     match currency with
-    | Usd x -> x
-    | Eur x -> x
-    | Pln x -> x
+    | Usd -> 1M
+    | Eur -> latestRate "EUR,USD"
+    | Gbp -> latestRate "GBP,USD"
+    | Pln -> latestRate "PLN,USD"
+    | Ypy -> latestRate "YPY,USD"
 
-let rateOfChange sourceCurrency finalCurrency =
-    (sourceCurrency |> rate) / (finalCurrency |> rate)
+let rateOfChange sourceCurrency finalCurrency (rateTable:Currency->decimal) =
+    let sourceRate = sourceCurrency |> rateTable
+    let finalRate = finalCurrency |> rateTable
+    sourceRate / finalRate
 
-let convert (money:Money) (finalCurrency:Currency) =
-    let (d, sourceCurrency) = money
-    let rateOfChange' = finalCurrency |> ( sourceCurrency |> rateOfChange )
-    d * rateOfChange'
-
-
+let convert (money:Money) (finalCurrency:Currency) (rateTable:Currency->decimal)
+    :Money =
+    let (d, sourceCurrency ) = money
+    let rateOfChange' =
+        rateTable |> ( (sourceCurrency, finalCurrency) ||> rateOfChange )
+    (d * rateOfChange'), finalCurrency
