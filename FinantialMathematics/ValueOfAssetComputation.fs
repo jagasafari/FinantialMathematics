@@ -4,33 +4,42 @@ open System.Linq
 let futureValueOfOneDolarToday (opportnityCostOfCapital:decimal) (year:int) =
     decimal (float (1.0M+opportnityCostOfCapital) ** float year)
 
-let exchangeRate (opportnityCostOfCapital:decimal) (year:int) =
-    let div = futureValueOfOneDolarToday opportnityCostOfCapital year
-    1M / div
-
 let exchangeRateSeq n (oportunityCostOfCapital:decimal) =
     let rec ers (acc:int) =
         seq {
             if acc < n then
-                yield exchangeRate oportunityCostOfCapital acc
+                yield 1M / (futureValueOfOneDolarToday oportunityCostOfCapital (acc+1))
                 yield! (acc+1) |> ers
         }
     ers 0
 
 let presentValue (cashSeq:seq<decimal>) (oportunityCostOfCapital:decimal) =
-    let cashSeqCache = cashSeq |> Seq.cache
-    let futureExchangeRate = exchangeRateSeq (cashSeqCache.Count() + 1)
-                                oportunityCostOfCapital
-    Seq.zip (futureExchangeRate |> Seq.skip 1 ) cashSeqCache
+    let cashList = cashSeq |> List.ofSeq
+    let futureExchangeRate = exchangeRateSeq (cashList.Count()) oportunityCostOfCapital
+    Seq.zip futureExchangeRate cashList
+    |> Seq.sumBy (fun (x,y) -> x * y)
+
+let netPresentValue (investment:decimal) (cashSeq:seq<decimal>)
+    (oportunityCostOfCapital:decimal) =
+    let pv = presentValue cashSeq oportunityCostOfCapital
+    - investment + pv
+
+type AmountUnit =
+    | Million
+    | Thousand
+    | Billion
+
+let amountUnitMultiplier = function
+    | Million -> 1000000M
+    | Thousand -> 1000M
+    | Billion -> 1000000000M
+
+let presentValue' (cashSeq:seq<decimal>) (futureExchangeRateSeq:seq<decimal>) =
+    cashSeq |> Seq.zip <| futureExchangeRateSeq
     |> Seq.sumBy (fun x-> (x |> fst) * (x |> snd))
 
-let netPresentValue (cashSeq:seq<decimal>) (oportunityCostOfCapital:decimal) =
-    let cashSeqCache = cashSeq |> Seq.cache
-    let futureExchangeRate = exchangeRateSeq (cashSeqCache.Count() ) oportunityCostOfCapital
-    if cashSeqCache.Count() = 1 then
-        cashSeqCache |> Seq.head
-    else
-        futureExchangeRate |> Seq.zip <| (cashSeqCache |> Seq.skip 1)
-        |> Seq.sumBy (fun x-> (x |> fst) * (x |> snd))
-        |> fun x -> x + (cashSeqCache |> Seq.head )
+let netPresentValue' (investment:decimal) (cashSeq:seq<decimal>)
+    (futureExchangeRateSeq:seq<decimal>) =
+    let pv = presentValue' cashSeq futureExchangeRateSeq
+    - investment + pv
 

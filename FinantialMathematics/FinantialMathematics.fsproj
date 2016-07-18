@@ -82,8 +82,9 @@
     <Compile Include="Asset.fs" />
     <Compile Include="ValueOfAssetComputation.fs" />
     <Compile Include="ValueOfAsset.fs" />
-    <Compile Include="LatestExchangeRates.fs" />
     <Compile Include="Currency.fs" />
+    <Compile Include="LatestExchangeRates.fs" />
+    <Compile Include="RateOfChange.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

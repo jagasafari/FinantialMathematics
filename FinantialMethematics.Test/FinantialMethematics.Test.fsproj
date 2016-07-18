@@ -80,10 +80,9 @@
   -->
   <ItemGroup>
     <Compile Include="AssetTest.fs" />
-    <Compile Include="ValueOfAssetTest.fs" />
-    <Compile Include="CurrencyTest.fs" />
     <Compile Include="ValueOfAssetComputationTest.fs" />
     <None Include="paket.references" />
+    <Compile Include="RateOfChangeTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -218,11 +217,6 @@
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">
       <ItemGroup>
-        <Reference Include="FsUnit.NUnit">
-          <HintPath>..\packages\FsUnit\lib\net45\FsUnit.NUnit.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
         <Reference Include="NHamcrest">
           <HintPath>..\packages\FsUnit\lib\net45\NHamcrest.dll</HintPath>
           <Private>True</Private>
@@ -239,21 +233,9 @@
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
-        <Reference Include="NHamcrest">
-          <HintPath>..\packages\FsUnit.xUnit\lib\net45\NHamcrest.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
       </ItemGroup>
     </When>
   </Choose>
-  <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-      <Paket>True</Paket>
-    </Reference>
-  </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
