@@ -1,17 +1,6 @@
 ﻿module ValueOfAssetComputation
 open System.Linq
-
-let futureValueOfOneDolarToday (opportnityCostOfCapital:decimal) (year:int) =
-    decimal (float (1.0M+opportnityCostOfCapital) ** float year)
-
-let exchangeRateSeq n (oportunityCostOfCapital:decimal) =
-    let rec ers (acc:int) =
-        seq {
-            if acc < n then
-                yield 1M / (futureValueOfOneDolarToday oportunityCostOfCapital (acc+1))
-                yield! (acc+1) |> ers
-        }
-    ers 0
+open Rates
 
 let presentValue (cashSeq:seq<decimal>) (oportunityCostOfCapital:decimal) =
     let cashList = cashSeq |> List.ofSeq

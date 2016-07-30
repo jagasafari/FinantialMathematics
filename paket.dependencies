@@ -6,3 +6,5 @@ nuget FsUnit
 nuget FsUnit.xUnit
 nuget Unquote
 nuget xunit
+nuget WebSharper
+nuget WebSharper.UI.Next

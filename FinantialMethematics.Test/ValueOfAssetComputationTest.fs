@@ -3,12 +3,13 @@
 open Xunit
 open ValueOfAssetComputation
 open Swensen.Unquote
+open Rates
 
 [<Theory>]
 [<InlineData(1, 0.5, 1.5)>]
 [<InlineData(2, 0.5, 2.25)>]
 let `` future value of one dolar`` (year:int) (oportunityCostOfCapital:decimal) expected =
-    let actual = futureValueOfOneDolarToday oportunityCostOfCapital year
+    let actual = futureValueOfOneDolarToday year oportunityCostOfCapital 
     Assert.Equal(actual, expected)
 
 [<Theory>]

@@ -1,7 +1,7 @@
 ﻿module RateOfChange
 
 open FinantilaMathematics.Currency
-open LatestExchangeRates
+open LatestCurrencyExchangeRates
 
 let rateOfChange sourceCurrency finalCurrency (rateTable:Currency->ExchanegRate) =
     let (_, _, sourceRate) = sourceCurrency |> rateTable

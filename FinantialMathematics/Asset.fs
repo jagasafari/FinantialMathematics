@@ -15,3 +15,5 @@ type Asset(cashFlowSeq:seq<CashFlow>) =
     member __.TimeLine = cashFlowSeq |> Seq.map(fun x -> x |> snd)
     member __.CashSeq = cashFlowSeq |> Seq.map(fun x-> x|> fst)
 
+type SymbolicOfAsset = BuisnessEntity | Property | Plant | Equipment | Patent
+                        | Stock | Bond | Option | Knowledge | Reputation | Opportunity
