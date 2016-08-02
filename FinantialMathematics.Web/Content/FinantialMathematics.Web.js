@@ -15757,6 +15757,319 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
 
 (function()
 {
+ var Global=this,Runtime=this.IntelliFactory.Runtime,Strings,Exception,Data,Pervasives,jQuery,Concurrency,IO,JSRuntime,Arrays,Operators,Array,Option,Unchecked,Guid,String,WBRuntime,List,JavaScript,Pervasives1;
+ Runtime.Define(Global,{
+  WebSharper:{
+   Data:{
+    IO:{
+     asyncReadTextAtRuntime:function(forFSI,defaultResolutionFolder,resolutionFolder,formatName,encodingStr,uri)
+     {
+      var arg00;
+      arg00=function(tupledArg)
+      {
+       var ok,ko,_arg5,l,patternInput,uri1,jsonp,settings,_,fn,value;
+       ok=tupledArg[0];
+       ko=tupledArg[1];
+       _arg5=tupledArg[2];
+       l=uri.toLowerCase();
+       patternInput=Strings.StartsWith(l,"jsonp|")?[uri.substring(6),true]:Strings.StartsWith(l,"json|")?[uri.substring(5),false]:[uri,false];
+       uri1=patternInput[0];
+       jsonp=patternInput[1];
+       settings={
+        dataType:"json",
+        success:function(data)
+        {
+         return ok(data);
+        },
+        error:function(_arg3,_arg4,err)
+        {
+         return ko(Exception.New1(err));
+        }
+       };
+       if(jsonp)
+        {
+         fn=Pervasives.randomFunctionName();
+         settings.dataType="jsonp";
+         settings.jsonp="prefix";
+         _=void(settings.jsonpCallback="jsonp"+fn);
+        }
+       else
+        {
+         _=null;
+        }
+       value=jQuery.ajax(uri1,settings);
+       return;
+      };
+      return Concurrency.FromContinuations(arg00);
+     },
+     asyncReadTextAtRuntimeWithDesignTimeRules:function(defaultResolutionFolder,resolutionFolder,formatName,encodingStr,uri)
+     {
+      return IO.asyncReadTextAtRuntime(false,defaultResolutionFolder,resolutionFolder,formatName,encodingStr,uri);
+     }
+    },
+    JSRuntime:{
+     GetArrayChildByTypeTag:function(value,cultureStr,tagCode)
+     {
+      var arr,x;
+      x=function()
+      {
+       return this;
+      };
+      arr=JSRuntime.GetArrayChildrenByTypeTag(value,cultureStr,tagCode,x);
+      return Arrays.length(arr)===1?Arrays.get(arr,0):Operators.FailWith("JSON mismatch: Expected single value, but found multiple.");
+     },
+     GetArrayChildrenByTypeTag:function(doc,cultureStr,tagCode,mapping)
+     {
+      var _,chooser,mapping1,array;
+      if(Array.isArray(doc))
+       {
+        chooser=function(value)
+        {
+         return JSRuntime.matchTag(tagCode,value);
+        };
+        mapping1=function(x)
+        {
+         return function()
+         {
+          return mapping.call(arguments[0]);
+         }(x);
+        };
+        array=Arrays.choose(chooser,doc);
+        _=Arrays.map(mapping1,array);
+       }
+      else
+       {
+        _=Operators.FailWith("JSON mismatch: Expected Array node");
+       }
+      return _;
+     },
+     TryGetArrayChildByTypeTag:function(doc,cultureStr,tagCode,mapping)
+     {
+      var arr;
+      arr=JSRuntime.GetArrayChildrenByTypeTag(doc,cultureStr,tagCode,mapping);
+      return Arrays.length(arr)===1?{
+       $:1,
+       $0:Arrays.get(arr,0)
+      }:Arrays.length(arr)===0?{
+       $:0
+      }:Operators.FailWith("JSON mismatch: Expected Array with single or no elements.");
+     },
+     TryGetValueByTypeTag:function(doc,cultureStr,tagCode,mapping)
+     {
+      var mapping1,option;
+      mapping1=function(x)
+      {
+       return function()
+       {
+        return mapping.call(arguments[0]);
+       }(x);
+      };
+      option=JSRuntime.matchTag(tagCode,doc);
+      return Option.map(mapping1,option);
+     },
+     matchTag:function(tagCode,value)
+     {
+      var _,_1,_2,_3,v;
+      if(value==null)
+       {
+        _={
+         $:0
+        };
+       }
+      else
+       {
+        if(Unchecked.Equals(typeof value,"boolean")?tagCode==="Boolean":false)
+         {
+          _1={
+           $:1,
+           $0:value
+          };
+         }
+        else
+         {
+          if(Unchecked.Equals(typeof value,"number")?tagCode==="Number":false)
+           {
+            _2={
+             $:1,
+             $0:value
+            };
+           }
+          else
+           {
+            if(Unchecked.Equals(typeof value,"string")?tagCode==="Number":false)
+             {
+              v=1*value;
+              _3=Global.isNaN(v)?{
+               $:0
+              }:{
+               $:1,
+               $0:v
+              };
+             }
+            else
+             {
+              _3=(Unchecked.Equals(typeof value,"string")?tagCode==="String":false)?{
+               $:1,
+               $0:value
+              }:(Array.isArray(value)?tagCode==="Array":false)?{
+               $:1,
+               $0:value
+              }:(Unchecked.Equals(typeof value,"object")?tagCode==="Record":false)?{
+               $:1,
+               $0:value
+              }:{
+               $:0
+              };
+             }
+            _2=_3;
+           }
+          _1=_2;
+         }
+        _=_1;
+       }
+      return _;
+     }
+    },
+    Pervasives:{
+     randomFunctionName:function()
+     {
+      var copyOfStruct;
+      copyOfStruct=Guid.NewGuid();
+      return Strings.ReplaceChar(String(copyOfStruct).toLowerCase(),45,95);
+     }
+    },
+    TxtRuntime:{
+     AsyncMap:function(comp,mapping)
+     {
+      return Concurrency.Delay(function()
+      {
+       return Concurrency.Bind(comp,function(_arg1)
+       {
+        return Concurrency.Return(function()
+        {
+         return mapping.call(arguments[0]);
+        }(_arg1));
+       });
+      });
+     }
+    },
+    Utils:{
+     HasProperty:function(x,prop)
+     {
+      var v;
+      v=x[prop];
+      return!Unchecked.Equals(typeof v,"undefined")?true:false;
+     }
+    },
+    WBRuntime:{
+     WorldBankRuntime:Runtime.Class({},{
+      AsyncGetIndicator:function(country,indicator)
+      {
+       return Concurrency.FromContinuations(function(tupledArg)
+       {
+        var ok,ko,_arg1,guid,wb,countryCode,url,value;
+        ok=tupledArg[0];
+        ko=tupledArg[1];
+        _arg1=tupledArg[2];
+        guid=Pervasives.randomFunctionName();
+        wb=country.Context;
+        countryCode=country.Code;
+        url=WBRuntime.worldBankUrl(wb,List.ofArray(["countries",countryCode,"indicators",indicator]),List.ofArray([["date","1900:2050"],["format","jsonp"]]));
+        value=jQuery.ajax({
+         url:url,
+         dataType:"jsonp",
+         jsonp:"prefix",
+         jsonpCallback:"jsonp"+guid,
+         error:function(jqXHR,textStatus,error)
+         {
+          return ko(Exception.New1(textStatus+error));
+         },
+         success:function(data)
+         {
+          var chooser,array,array1,res;
+          chooser=function(e)
+          {
+           return e.value==null?{
+            $:0
+           }:{
+            $:1,
+            $0:[e.date,e.value]
+           };
+          };
+          array=Arrays.get(data,1);
+          array1=Arrays.choose(chooser,array);
+          res=array1.slice().reverse();
+          return ok(Pervasives1.NewFromList(res));
+         }
+        });
+        return;
+       });
+      },
+      GetCountry:function(countries,code,name)
+      {
+       return{
+        Context:countries,
+        Code:code,
+        Name:name
+       };
+      },
+      GetIndicators:function(country)
+      {
+       return country;
+      }
+     }),
+     worldBankUrl:function(wb,functions,props)
+     {
+      var mapping,strings,mapping1,strings1;
+      mapping=function(m)
+      {
+       return"/"+Global.encodeURIComponent(m);
+      };
+      strings=List.map(mapping,functions);
+      mapping1=function(tupledArg)
+      {
+       var key,value;
+       key=tupledArg[0];
+       value=tupledArg[1];
+       return"&"+key+"="+Global.encodeURIComponent(value);
+      };
+      strings1=List.map(mapping1,props);
+      return wb.serviceUrl+"/"+Strings.concat("",strings)+"?per_page=1000"+Strings.concat("",strings1);
+     }
+    }
+   }
+  }
+ });
+ Runtime.OnInit(function()
+ {
+  Strings=Runtime.Safe(Global.WebSharper.Strings);
+  Exception=Runtime.Safe(Global.WebSharper.Exception);
+  Data=Runtime.Safe(Global.WebSharper.Data);
+  Pervasives=Runtime.Safe(Data.Pervasives);
+  jQuery=Runtime.Safe(Global.jQuery);
+  Concurrency=Runtime.Safe(Global.WebSharper.Concurrency);
+  IO=Runtime.Safe(Data.IO);
+  JSRuntime=Runtime.Safe(Data.JSRuntime);
+  Arrays=Runtime.Safe(Global.WebSharper.Arrays);
+  Operators=Runtime.Safe(Global.WebSharper.Operators);
+  Array=Runtime.Safe(Global.Array);
+  Option=Runtime.Safe(Global.WebSharper.Option);
+  Unchecked=Runtime.Safe(Global.WebSharper.Unchecked);
+  Guid=Runtime.Safe(Global.WebSharper.Guid);
+  String=Runtime.Safe(Global.String);
+  WBRuntime=Runtime.Safe(Data.WBRuntime);
+  List=Runtime.Safe(Global.WebSharper.List);
+  JavaScript=Runtime.Safe(Global.WebSharper.JavaScript);
+  return Pervasives1=Runtime.Safe(JavaScript.Pervasives);
+ });
+ Runtime.OnLoad(function()
+ {
+  return;
+ });
+}());
+
+(function()
+{
  var Global=this,Runtime=this.IntelliFactory.Runtime,Unchecked,Seq,Option,Control,Disposable,Arrays,FSharpEvent,Util,Event,Event1,Collections,ResizeArray,ResizeArrayProxy,EventModule,HotStream,HotStream1,Concurrency,Operators,TimeoutException,setTimeout,clearTimeout,LinkedList,T,MailboxProcessor,Observable,Observer,Ref,Observable1,List,T1,Observer1;
  Runtime.Define(Global,{
   WebSharper:{
@@ -17223,6 +17536,2785 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
  });
 }());
 
+(function()
+{
+ var Global=this,Runtime=this.IntelliFactory.Runtime,IntelliFactory,Reactive,Disposable,HotStream,Control,FSharpEvent,Observer,Observable,Util,Collections,Dictionary,Ref,Seq,Reactive1,Reactive2,List,T;
+ Runtime.Define(Global,{
+  IntelliFactory:{
+   Reactive:{
+    Disposable:Runtime.Class({
+     Dispose:function()
+     {
+      return this.Dispose1.call(null,null);
+     }
+    },{
+     New:function(d)
+     {
+      return Runtime.New(Disposable,{
+       Dispose1:d
+      });
+     }
+    }),
+    HotStream:Runtime.Class({
+     Subscribe:function(o)
+     {
+      this.Latest[0].$==1?o.OnNext(this.Latest[0].$0):null;
+      return this.Event.event.Subscribe(o);
+     },
+     Trigger:function(v)
+     {
+      this.Latest[0]={
+       $:1,
+       $0:v
+      };
+      return this.Event.event.Trigger(v);
+     }
+    },{
+     New:function(x)
+     {
+      var value;
+      value={
+       $:1,
+       $0:x
+      };
+      return Runtime.New(HotStream,{
+       Latest:[value],
+       Event:FSharpEvent.New()
+      });
+     },
+     New1:function()
+     {
+      return Runtime.New(HotStream,{
+       Latest:[{
+        $:0
+       }],
+       Event:FSharpEvent.New()
+      });
+     }
+    }),
+    Observable:Runtime.Class({
+     Subscribe:function(o)
+     {
+      return this.OnSubscribe.call(null,o);
+     },
+     SubscribeWith:function(onNext,onComplete)
+     {
+      return this.OnSubscribe.call(null,Observer.New(onNext,onComplete));
+     }
+    },{
+     New:function(f)
+     {
+      return Runtime.New(Observable,{
+       OnSubscribe:f
+      });
+     }
+    }),
+    Observer:Runtime.Class({
+     OnCompleted:function()
+     {
+      return this.OnCompleted1.call(null,null);
+     },
+     OnError:function()
+     {
+      return null;
+     },
+     OnNext:function(t)
+     {
+      return this.OnNext1.call(null,t);
+     }
+    },{
+     New:function(onNext,onComplete)
+     {
+      return Runtime.New(Observer,{
+       OnNext1:onNext,
+       OnCompleted1:onComplete
+      });
+     }
+    }),
+    Reactive:{
+     Aggregate:function(io,seed,acc)
+     {
+      return Observable.New(function(o)
+      {
+       var state;
+       state=[seed];
+       return Util.subscribeTo(io,function(value)
+       {
+        state[0]=(acc(state[0]))(value);
+        return o.OnNext(state[0]);
+       });
+      });
+     },
+     Choose:function(io,f)
+     {
+      var arg00;
+      arg00=function(o1)
+      {
+       return Util.subscribeTo(io,function(v)
+       {
+        var matchValue,_,v1;
+        matchValue=f(v);
+        if(matchValue.$==0)
+         {
+          _=null;
+         }
+        else
+         {
+          v1=matchValue.$0;
+          _=o1.OnNext(v1);
+         }
+        return _;
+       });
+      };
+      return Observable.New(arg00);
+     },
+     CollectLatest:function(outer)
+     {
+      return Observable.New(function(o)
+      {
+       var dict,index;
+       dict=Dictionary.New12();
+       index=[0];
+       return Util.subscribeTo(outer,function(inner)
+       {
+        var currentIndex,value;
+        Ref.incr(index);
+        currentIndex=index[0];
+        value=Util.subscribeTo(inner,function(value1)
+        {
+         var arg00;
+         dict.set_Item(currentIndex,value1);
+         arg00=Seq.delay(function()
+         {
+          return Seq.map(function(pair)
+          {
+           return pair.V;
+          },dict);
+         });
+         return o.OnNext(arg00);
+        });
+        return;
+       });
+      });
+     },
+     CombineLast:function(io1,io2,f)
+     {
+      var arg00;
+      arg00=function(o)
+      {
+       var lv1s,lv2s,update,onNext,arg10,o1,onNext1,arg101,o2,d1,d2;
+       lv1s=[];
+       lv2s=[];
+       update=function()
+       {
+        var _,v1,v2;
+        if(lv1s.length>0?lv2s.length>0:false)
+         {
+          v1=lv1s.shift();
+          v2=lv2s.shift();
+          _=o.OnNext((f(v1))(v2));
+         }
+        else
+         {
+          _=null;
+         }
+        return _;
+       };
+       onNext=function(x)
+       {
+        lv1s.push(x);
+        return update(null);
+       };
+       arg10=function()
+       {
+       };
+       o1=Observer.New(onNext,arg10);
+       onNext1=function(y)
+       {
+        lv2s.push(y);
+        return update(null);
+       };
+       arg101=function()
+       {
+       };
+       o2=Observer.New(onNext1,arg101);
+       d1=io1.Subscribe(o1);
+       d2=io2.Subscribe(o2);
+       return Disposable.New(function()
+       {
+        d1.Dispose();
+        return d2.Dispose();
+       });
+      };
+      return Observable.New(arg00);
+     },
+     CombineLatest:function(io1,io2,f)
+     {
+      var arg00;
+      arg00=function(o)
+      {
+       var lv1,lv2,update,onNext,arg10,o1,onNext1,arg101,o2,d1,d2;
+       lv1=[{
+        $:0
+       }];
+       lv2=[{
+        $:0
+       }];
+       update=function()
+       {
+        var matchValue,_,_1,v1,v2;
+        matchValue=[lv1[0],lv2[0]];
+        if(matchValue[0].$==1)
+         {
+          if(matchValue[1].$==1)
+           {
+            v1=matchValue[0].$0;
+            v2=matchValue[1].$0;
+            _1=o.OnNext((f(v1))(v2));
+           }
+          else
+           {
+            _1=null;
+           }
+          _=_1;
+         }
+        else
+         {
+          _=null;
+         }
+        return _;
+       };
+       onNext=function(x)
+       {
+        lv1[0]={
+         $:1,
+         $0:x
+        };
+        return update(null);
+       };
+       arg10=function()
+       {
+       };
+       o1=Observer.New(onNext,arg10);
+       onNext1=function(y)
+       {
+        lv2[0]={
+         $:1,
+         $0:y
+        };
+        return update(null);
+       };
+       arg101=function()
+       {
+       };
+       o2=Observer.New(onNext1,arg101);
+       d1=io1.Subscribe(o1);
+       d2=io2.Subscribe(o2);
+       return Disposable.New(function()
+       {
+        d1.Dispose();
+        return d2.Dispose();
+       });
+      };
+      return Observable.New(arg00);
+     },
+     Concat:function(io1,io2)
+     {
+      var arg00;
+      arg00=function(o)
+      {
+       var innerDisp,arg001,arg10,arg003,outerDisp;
+       innerDisp=[{
+        $:0
+       }];
+       arg001=function(arg002)
+       {
+        return o.OnNext(arg002);
+       };
+       arg10=function()
+       {
+        innerDisp[0]={
+         $:1,
+         $0:io2.Subscribe(o)
+        };
+       };
+       arg003=Observer.New(arg001,arg10);
+       outerDisp=io1.Subscribe(arg003);
+       return Disposable.New(function()
+       {
+        innerDisp[0].$==1?innerDisp[0].$0.Dispose():null;
+        return outerDisp.Dispose();
+       });
+      };
+      return Observable.New(arg00);
+     },
+     Default:Runtime.Field(function()
+     {
+      return Reactive2.New();
+     }),
+     Drop:function(io,count)
+     {
+      var arg00;
+      arg00=function(o1)
+      {
+       var index;
+       index=[0];
+       return Util.subscribeTo(io,function(v)
+       {
+        Ref.incr(index);
+        return index[0]>count?o1.OnNext(v):null;
+       });
+      };
+      return Observable.New(arg00);
+     },
+     Heat:function(io)
+     {
+      var s;
+      s=HotStream.New1();
+      Util.subscribeTo(io,function(arg00)
+      {
+       return s.Trigger(arg00);
+      });
+      return s;
+     },
+     Merge:function(io1,io2)
+     {
+      var arg00;
+      arg00=function(o)
+      {
+       var completed1,completed2,arg001,arg10,arg003,disp1,arg004,arg101,arg005,disp2;
+       completed1=[false];
+       completed2=[false];
+       arg001=function(arg002)
+       {
+        return o.OnNext(arg002);
+       };
+       arg10=function()
+       {
+        completed1[0]=true;
+        return(completed1[0]?completed2[0]:false)?o.OnCompleted():null;
+       };
+       arg003=Observer.New(arg001,arg10);
+       disp1=io1.Subscribe(arg003);
+       arg004=function(arg002)
+       {
+        return o.OnNext(arg002);
+       };
+       arg101=function()
+       {
+        completed2[0]=true;
+        return(completed1[0]?completed2[0]:false)?o.OnCompleted():null;
+       };
+       arg005=Observer.New(arg004,arg101);
+       disp2=io2.Subscribe(arg005);
+       return Disposable.New(function()
+       {
+        disp1.Dispose();
+        return disp2.Dispose();
+       });
+      };
+      return Observable.New(arg00);
+     },
+     Never:function()
+     {
+      return Observable.New(function()
+      {
+       return Disposable.New(function()
+       {
+       });
+      });
+     },
+     Range:function(start,count)
+     {
+      var arg00;
+      arg00=function(o)
+      {
+       var i;
+       for(i=start;i<=start+count;i++){
+        o.OnNext(i);
+       }
+       return Disposable.New(function()
+       {
+       });
+      };
+      return Observable.New(arg00);
+     },
+     Reactive:Runtime.Class({
+      Aggregate:function(io,s,a)
+      {
+       return Reactive1.Aggregate(io,s,a);
+      },
+      Choose:function(io,f)
+      {
+       return Reactive1.Choose(io,f);
+      },
+      CollectLatest:function(io)
+      {
+       return Reactive1.CollectLatest(io);
+      },
+      CombineLatest:function(io1,io2,f)
+      {
+       return Reactive1.CombineLatest(io1,io2,f);
+      },
+      Concat:function(io1,io2)
+      {
+       return Reactive1.Concat(io1,io2);
+      },
+      Drop:function(io,count)
+      {
+       return Reactive1.Drop(io,count);
+      },
+      Heat:function(io)
+      {
+       return Reactive1.Heat(io);
+      },
+      Merge:function(io1,io2)
+      {
+       return Reactive1.Merge(io1,io2);
+      },
+      Never:function()
+      {
+       return Reactive1.Never();
+      },
+      Return:function(x)
+      {
+       return Reactive1.Return(x);
+      },
+      Select:function(io,f)
+      {
+       return Reactive1.Select(io,f);
+      },
+      SelectMany:function(io)
+      {
+       return Reactive1.SelectMany(io);
+      },
+      Sequence:function(ios)
+      {
+       return Reactive1.Sequence(ios);
+      },
+      Switch:function(io)
+      {
+       return Reactive1.Switch(io);
+      },
+      Where:function(io,f)
+      {
+       return Reactive1.Where(io,f);
+      }
+     },{
+      New:function()
+      {
+       return Runtime.New(this,{});
+      }
+     }),
+     Return:function(x)
+     {
+      var f;
+      f=function(o)
+      {
+       o.OnNext(x);
+       o.OnCompleted();
+       return Disposable.New(function()
+       {
+       });
+      };
+      return Observable.New(f);
+     },
+     Select:function(io,f)
+     {
+      return Observable.New(function(o1)
+      {
+       return Util.subscribeTo(io,function(v)
+       {
+        return o1.OnNext(f(v));
+       });
+      });
+     },
+     SelectMany:function(io)
+     {
+      return Observable.New(function(o)
+      {
+       var disp,d;
+       disp=[function()
+       {
+       }];
+       d=Util.subscribeTo(io,function(o1)
+       {
+        var d1;
+        d1=Util.subscribeTo(o1,function(arg00)
+        {
+         return o.OnNext(arg00);
+        });
+        disp[0]=function()
+        {
+         disp[0].call(null,null);
+         return d1.Dispose();
+        };
+        return;
+       });
+       return Disposable.New(function()
+       {
+        disp[0].call(null,null);
+        return d.Dispose();
+       });
+      });
+     },
+     Sequence:function(ios)
+     {
+      var sequence;
+      sequence=function(ios1)
+      {
+       var _,xs,x,rest;
+       if(ios1.$==1)
+        {
+         xs=ios1.$1;
+         x=ios1.$0;
+         rest=sequence(xs);
+         _=Reactive1.CombineLatest(x,rest,function(x1)
+         {
+          return function(y)
+          {
+           return Runtime.New(T,{
+            $:1,
+            $0:x1,
+            $1:y
+           });
+          };
+         });
+        }
+       else
+        {
+         _=Reactive1.Return(Runtime.New(T,{
+          $:0
+         }));
+        }
+       return _;
+      };
+      return Reactive1.Select(sequence(List.ofSeq(ios)),function(source)
+      {
+       return source;
+      });
+     },
+     Switch:function(io)
+     {
+      return Observable.New(function(o)
+      {
+       var index,disp,disp1;
+       index=[0];
+       disp=[{
+        $:0
+       }];
+       disp1=Util.subscribeTo(io,function(o1)
+       {
+        var currentIndex,arg0,d;
+        Ref.incr(index);
+        disp[0].$==1?disp[0].$0.Dispose():null;
+        currentIndex=index[0];
+        arg0=Util.subscribeTo(o1,function(v)
+        {
+         return currentIndex===index[0]?o.OnNext(v):null;
+        });
+        d={
+         $:1,
+         $0:arg0
+        };
+        disp[0]=d;
+        return;
+       });
+       return disp1;
+      });
+     },
+     Where:function(io,f)
+     {
+      var arg00;
+      arg00=function(o1)
+      {
+       return Util.subscribeTo(io,function(v)
+       {
+        return f(v)?o1.OnNext(v):null;
+       });
+      };
+      return Observable.New(arg00);
+     }
+    }
+   }
+  }
+ });
+ Runtime.OnInit(function()
+ {
+  IntelliFactory=Runtime.Safe(Global.IntelliFactory);
+  Reactive=Runtime.Safe(IntelliFactory.Reactive);
+  Disposable=Runtime.Safe(Reactive.Disposable);
+  HotStream=Runtime.Safe(Reactive.HotStream);
+  Control=Runtime.Safe(Global.WebSharper.Control);
+  FSharpEvent=Runtime.Safe(Control.FSharpEvent);
+  Observer=Runtime.Safe(Reactive.Observer);
+  Observable=Runtime.Safe(Reactive.Observable);
+  Util=Runtime.Safe(Global.WebSharper.Util);
+  Collections=Runtime.Safe(Global.WebSharper.Collections);
+  Dictionary=Runtime.Safe(Collections.Dictionary);
+  Ref=Runtime.Safe(Global.WebSharper.Ref);
+  Seq=Runtime.Safe(Global.WebSharper.Seq);
+  Reactive1=Runtime.Safe(Reactive.Reactive);
+  Reactive2=Runtime.Safe(Reactive1.Reactive);
+  List=Runtime.Safe(Global.WebSharper.List);
+  return T=Runtime.Safe(List.T);
+ });
+ Runtime.OnLoad(function()
+ {
+  Reactive1.Default();
+  return;
+ });
+}());
+
+(function()
+{
+ var Global=this,Runtime=this.IntelliFactory.Runtime,Charting,Charts,BarChart,Pervasives,CompositeChart,DoughnutChart,Seq,LineChart,PieChart,PolarAreaChart,RadarChart,Util,Control,FSharpEvent,IntelliFactory,Reactive,Reactive1,Color,Random,Reactive2,Renderers,ChartJsInternal,Operators,Option,clearTimeout,Ref,setTimeout,Arrays,Chart,Slice,Seq1,BatchUpdater,UI,Next,Doc,List,AttrProxy,AttrModule,T;
+ Runtime.Define(Global,{
+  WebSharper:{
+   Charting:{
+    Chart:Runtime.Class({},{
+     Bar:function(dataset)
+     {
+      return BarChart.New({
+       $:0,
+       $0:dataset
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig());
+     },
+     Bar1:function(dataset)
+     {
+      var arg0;
+      arg0=Pervasives.withIndex(dataset);
+      return BarChart.New({
+       $:0,
+       $0:arg0
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig());
+     },
+     Combine:function(charts)
+     {
+      return CompositeChart.New(charts);
+     },
+     Doughnut:function(dataset)
+     {
+      return DoughnutChart.New({
+       $:0,
+       $0:dataset
+      },Charts.defaultChartConfig());
+     },
+     Doughnut1:function(dataset)
+     {
+      var mapping,d;
+      mapping=function(t)
+      {
+       return((Charts.defaultPolarData())(t[0]))(t[1]);
+      };
+      d=Seq.map(mapping,dataset);
+      return DoughnutChart.New({
+       $:0,
+       $0:d
+      },Charts.defaultChartConfig());
+     },
+     Line:function(dataset)
+     {
+      return LineChart.New({
+       $:0,
+       $0:dataset
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     },
+     Line1:function(dataset)
+     {
+      var arg0;
+      arg0=Pervasives.withIndex(dataset);
+      return LineChart.New({
+       $:0,
+       $0:arg0
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     },
+     Pie:function(dataset)
+     {
+      return PieChart.New({
+       $:0,
+       $0:dataset
+      },Charts.defaultChartConfig());
+     },
+     Pie1:function(dataset)
+     {
+      var mapping,d;
+      mapping=function(t)
+      {
+       return((Charts.defaultPolarData())(t[0]))(t[1]);
+      };
+      d=Seq.map(mapping,dataset);
+      return PieChart.New({
+       $:0,
+       $0:d
+      },Charts.defaultChartConfig());
+     },
+     PolarArea:function(dataset)
+     {
+      return PolarAreaChart.New({
+       $:0,
+       $0:dataset
+      },Charts.defaultChartConfig());
+     },
+     PolarArea1:function(dataset)
+     {
+      var mapping,d;
+      mapping=function(t)
+      {
+       return((Charts.defaultPolarData())(t[0]))(t[1]);
+      };
+      d=Seq.map(mapping,dataset);
+      return PolarAreaChart.New({
+       $:0,
+       $0:d
+      },Charts.defaultChartConfig());
+     },
+     Radar:function(dataset)
+     {
+      return RadarChart.New({
+       $:0,
+       $0:dataset
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     },
+     Radar1:function(dataset)
+     {
+      var arg0;
+      arg0=Pervasives.withIndex(dataset);
+      return RadarChart.New({
+       $:0,
+       $0:arg0
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     }
+    }),
+    Charts:{
+     BarChart:Runtime.Class({
+      OnUpdate:function(fn)
+      {
+       return Util.addListener(this.event.event,fn);
+      },
+      UpdateData:function(data,props)
+      {
+       return this.event.event.Trigger([data,props]);
+      },
+      WithFillColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return BarChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:color,
+        StrokeColor:inputRecord.StrokeColor
+       });
+      },
+      WithStrokeColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return BarChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:color
+       });
+      },
+      WithTitle:function(title)
+      {
+       this.cfg;
+       return BarChart.New(this.dataset,{
+        Title:title
+       },this.scfg);
+      },
+      WithXAxis:function(xAxis)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return BarChart.New(this.dataset,this.cfg,{
+        XAxis:xAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:inputRecord.StrokeColor
+       });
+      },
+      WithYAxis:function(yAxis)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return BarChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:yAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:inputRecord.StrokeColor
+       });
+      },
+      __UpdateData:function(data,props)
+      {
+       return this.UpdateData(data,props);
+      },
+      __WithFillColor:function(color)
+      {
+       return this.cst(this).WithFillColor(color);
+      },
+      __WithStrokeColor:function(color)
+      {
+       return this.cst(this).WithStrokeColor(color);
+      },
+      __WithTitle:function(title)
+      {
+       return this.cst(this).WithTitle(title);
+      },
+      __WithXAxis:function(xAxis)
+      {
+       return this.cst(this).WithXAxis(xAxis);
+      },
+      __WithYAxis:function(yAxis)
+      {
+       return this.cst(this).WithYAxis(yAxis);
+      },
+      cst:function(x)
+      {
+       return x;
+      },
+      get_Config:function()
+      {
+       return this.cfg;
+      },
+      get_DataSet:function()
+      {
+       return this.dataset;
+      },
+      get_SeriesConfig:function()
+      {
+       return this.scfg;
+      },
+      get__Config:function()
+      {
+       return this.cst(this).get_Config();
+      },
+      get__SeriesConfig:function()
+      {
+       return this.cst(this).get_SeriesConfig();
+      }
+     },{
+      New:function(dataset,cfg,scfg)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.dataset=dataset;
+       r.cfg=cfg;
+       r.scfg=scfg;
+       r.event=FSharpEvent.New();
+       return r;
+      }
+     }),
+     CompositeChart:Runtime.Class({
+      get_Charts:function()
+      {
+       return this.charts;
+      }
+     },{
+      New:function(charts)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.charts=charts;
+       return r;
+      }
+     }),
+     DataType:{
+      Map:function(fn,dt)
+      {
+       var _,io,arg0,s,arg01;
+       if(dt.$==1)
+        {
+         io=dt.$0;
+         arg0=Reactive1.Select(io,fn);
+         _={
+          $:1,
+          $0:arg0
+         };
+        }
+       else
+        {
+         s=dt.$0;
+         arg01=Seq.map(fn,s);
+         _={
+          $:0,
+          $0:arg01
+         };
+        }
+       return _;
+      }
+     },
+     DoughnutChart:Runtime.Class({
+      OnUpdate:function(fn)
+      {
+       return Util.addListener(this.event.event,fn);
+      },
+      UpdateData:function(data,props)
+      {
+       return this.event.event.Trigger([data,props]);
+      },
+      WithTitle:function(title)
+      {
+       this.cfg;
+       return DoughnutChart.New(this.dataset,{
+        Title:title
+       });
+      },
+      __UpdateData:function(props,data)
+      {
+       return this.UpdateData(props,data);
+      },
+      __WithTitle:function(title)
+      {
+       return this.cst(this).WithTitle(title);
+      },
+      cst:function(x)
+      {
+       return x;
+      },
+      get_Config:function()
+      {
+       return this.cfg;
+      },
+      get_DataSet:function()
+      {
+       return this.dataset;
+      },
+      get__Config:function()
+      {
+       return this.cst(this).get_Config();
+      },
+      get__DataSet:function()
+      {
+       return this.cst(this).get_DataSet();
+      }
+     },{
+      New:function(dataset,cfg)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.dataset=dataset;
+       r.cfg=cfg;
+       r.event=FSharpEvent.New();
+       return r;
+      }
+     }),
+     LineChart:Runtime.Class({
+      OnUpdate:function(fn)
+      {
+       return Util.addListener(this.event.event,fn);
+      },
+      UpdateData:function(data,props)
+      {
+       return this.event.event.Trigger([data,props]);
+      },
+      WithFillColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return LineChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:color,
+        StrokeColor:inputRecord.StrokeColor
+       },this.ccfg);
+      },
+      WithPointColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return LineChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:color,
+        PointHighlightFill:inputRecord.PointHighlightFill,
+        PointHighlightStroke:inputRecord.PointHighlightStroke,
+        PointStrokeColor:inputRecord.PointStrokeColor
+       });
+      },
+      WithPointHighlightFill:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return LineChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:inputRecord.PointColor,
+        PointHighlightFill:color,
+        PointHighlightStroke:inputRecord.PointHighlightStroke,
+        PointStrokeColor:inputRecord.PointStrokeColor
+       });
+      },
+      WithPointHighlightStroke:function(color)
+      {
+       return this.WithPointHighlightStroke(color);
+      },
+      WithPointHighlightStroke1:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return LineChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:inputRecord.PointColor,
+        PointHighlightFill:inputRecord.PointHighlightFill,
+        PointHighlightStroke:color,
+        PointStrokeColor:inputRecord.PointStrokeColor
+       });
+      },
+      WithPointStrokeColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return LineChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:inputRecord.PointColor,
+        PointHighlightFill:inputRecord.PointHighlightFill,
+        PointHighlightStroke:inputRecord.PointHighlightStroke,
+        PointStrokeColor:color
+       });
+      },
+      WithStrokeColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return LineChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:color
+       },this.ccfg);
+      },
+      WithTitle:function(title)
+      {
+       this.cfg;
+       return LineChart.New(this.dataset,{
+        Title:title
+       },this.scfg,this.ccfg);
+      },
+      WithXAxis:function(xAxis)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return LineChart.New(this.dataset,this.cfg,{
+        XAxis:xAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:inputRecord.StrokeColor
+       },this.ccfg);
+      },
+      WithYAxis:function(yAxis)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return LineChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:yAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:inputRecord.StrokeColor
+       },this.ccfg);
+      },
+      __UpdateData:function(data,props)
+      {
+       return this.UpdateData(data,props);
+      },
+      __WithFillColor:function(color)
+      {
+       return this.WithFillColor(color);
+      },
+      __WithPointColor:function(color)
+      {
+       return this.WithPointColor(color);
+      },
+      __WithPointHighlightFill:function(color)
+      {
+       return this.WithPointHighlightFill(color);
+      },
+      __WithPointStrokeColor:function(color)
+      {
+       return this.WithPointStrokeColor(color);
+      },
+      __WithStrokeColor:function(color)
+      {
+       return this.WithStrokeColor(color);
+      },
+      __WithTitle:function(title)
+      {
+       return this.WithTitle(title);
+      },
+      __WithXAxis:function(xAxis)
+      {
+       return this.WithXAxis(xAxis);
+      },
+      __WithYAxis:function(yAxis)
+      {
+       return this.WithYAxis(yAxis);
+      },
+      get_ColorConfig:function()
+      {
+       return this.ccfg;
+      },
+      get_Config:function()
+      {
+       return this.cfg;
+      },
+      get_DataSet:function()
+      {
+       return this.dataset;
+      },
+      get_SeriesConfig:function()
+      {
+       return this.scfg;
+      },
+      get__ColorConfig:function()
+      {
+       return this.get_ColorConfig();
+      },
+      get__Config:function()
+      {
+       return this.get_Config();
+      },
+      get__SeriesConfig:function()
+      {
+       return this.get_SeriesConfig();
+      }
+     },{
+      New:function(dataset,cfg,scfg,ccfg)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.dataset=dataset;
+       r.cfg=cfg;
+       r.scfg=scfg;
+       r.ccfg=ccfg;
+       r.event=FSharpEvent.New();
+       return r;
+      }
+     }),
+     PieChart:Runtime.Class({
+      OnUpdate:function(fn)
+      {
+       return Util.addListener(this.event.event,fn);
+      },
+      UpdateData:function(data,props)
+      {
+       return this.event.event.Trigger([data,props]);
+      },
+      WithTitle:function(title)
+      {
+       this.cfg;
+       return PieChart.New(this.dataset,{
+        Title:title
+       });
+      },
+      __UpdateData:function(props,data)
+      {
+       return this.UpdateData(props,data);
+      },
+      __WithTitle:function(title)
+      {
+       return this.cst(this).WithTitle(title);
+      },
+      cst:function(x)
+      {
+       return x;
+      },
+      get_Config:function()
+      {
+       return this.cfg;
+      },
+      get_DataSet:function()
+      {
+       return this.dataset;
+      },
+      get__Config:function()
+      {
+       return this.cst(this).get_Config();
+      },
+      get__DataSet:function()
+      {
+       return this.cst(this).get_DataSet();
+      }
+     },{
+      New:function(dataset,cfg)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.dataset=dataset;
+       r.cfg=cfg;
+       r.event=FSharpEvent.New();
+       return r;
+      }
+     }),
+     PolarAreaChart:Runtime.Class({
+      OnUpdate:function(fn)
+      {
+       return Util.addListener(this.event.event,fn);
+      },
+      UpdateData:function(props,data)
+      {
+       return this.event.event.Trigger([props,data]);
+      },
+      WithTitle:function(title)
+      {
+       this.cfg;
+       return PolarAreaChart.New(this.dataset,{
+        Title:title
+       });
+      },
+      __DataSet:function()
+      {
+       return this.cst(this).get_DataSet();
+      },
+      __UpdateData:function(props,data)
+      {
+       return this.UpdateData(props,data);
+      },
+      __WithTitle:function(title)
+      {
+       return this.cst(this).WithTitle(title);
+      },
+      cst:function(x)
+      {
+       return x;
+      },
+      get_Config:function()
+      {
+       return this.cfg;
+      },
+      get_DataSet:function()
+      {
+       return this.dataset;
+      },
+      get__Config:function()
+      {
+       return this.cst(this).get_Config();
+      }
+     },{
+      New:function(dataset,cfg)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.dataset=dataset;
+       r.cfg=cfg;
+       r.event=FSharpEvent.New();
+       return r;
+      }
+     }),
+     RadarChart:Runtime.Class({
+      OnUpdate:function(fn)
+      {
+       return Util.addListener(this.event.event,fn);
+      },
+      UpdateData:function(data,props)
+      {
+       return this.event.event.Trigger([data,props]);
+      },
+      WithFillColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return RadarChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:color,
+        StrokeColor:inputRecord.StrokeColor
+       },this.ccfg);
+      },
+      WithPointColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return RadarChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:color,
+        PointHighlightFill:inputRecord.PointHighlightFill,
+        PointHighlightStroke:inputRecord.PointHighlightStroke,
+        PointStrokeColor:inputRecord.PointStrokeColor
+       });
+      },
+      WithPointHighlightFill:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return RadarChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:inputRecord.PointColor,
+        PointHighlightFill:color,
+        PointHighlightStroke:inputRecord.PointHighlightStroke,
+        PointStrokeColor:inputRecord.PointStrokeColor
+       });
+      },
+      WithPointHighlightStroke:function(color)
+      {
+       return this.WithPointHighlightStroke(color);
+      },
+      WithPointHighlightStroke1:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return RadarChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:inputRecord.PointColor,
+        PointHighlightFill:inputRecord.PointHighlightFill,
+        PointHighlightStroke:color,
+        PointStrokeColor:inputRecord.PointStrokeColor
+       });
+      },
+      WithPointStrokeColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.ccfg;
+       return RadarChart.New(this.dataset,this.cfg,this.scfg,{
+        PointColor:inputRecord.PointColor,
+        PointHighlightFill:inputRecord.PointHighlightFill,
+        PointHighlightStroke:inputRecord.PointHighlightStroke,
+        PointStrokeColor:color
+       });
+      },
+      WithStrokeColor:function(color)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return RadarChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:color
+       },this.ccfg);
+      },
+      WithTitle:function(title)
+      {
+       this.cfg;
+       return RadarChart.New(this.dataset,{
+        Title:title
+       },this.scfg,this.ccfg);
+      },
+      WithXAxis:function(xAxis)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return RadarChart.New(this.dataset,this.cfg,{
+        XAxis:xAxis,
+        YAxis:inputRecord.YAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:inputRecord.StrokeColor
+       },this.ccfg);
+      },
+      WithYAxis:function(yAxis)
+      {
+       var inputRecord;
+       inputRecord=this.scfg;
+       return RadarChart.New(this.dataset,this.cfg,{
+        XAxis:inputRecord.XAxis,
+        YAxis:yAxis,
+        FillColor:inputRecord.FillColor,
+        StrokeColor:inputRecord.StrokeColor
+       },this.ccfg);
+      },
+      __UpdateData:function(data,props)
+      {
+       return this.UpdateData(data,props);
+      },
+      __WithFillColor:function(color)
+      {
+       return this.WithFillColor(color);
+      },
+      __WithPointColor:function(color)
+      {
+       return this.WithPointColor(color);
+      },
+      __WithPointHighlightFill:function(color)
+      {
+       return this.WithPointHighlightFill(color);
+      },
+      __WithPointStrokeColor:function(color)
+      {
+       return this.WithPointStrokeColor(color);
+      },
+      __WithStrokeColor:function(color)
+      {
+       return this.WithStrokeColor(color);
+      },
+      __WithTitle:function(title)
+      {
+       return this.WithTitle(title);
+      },
+      __WithXAxis:function(xAxis)
+      {
+       return this.WithXAxis(xAxis);
+      },
+      __WithYAxis:function(yAxis)
+      {
+       return this.WithYAxis(yAxis);
+      },
+      get_ColorConfig:function()
+      {
+       return this.ccfg;
+      },
+      get_Config:function()
+      {
+       return this.cfg;
+      },
+      get_DataSet:function()
+      {
+       return this.dataset;
+      },
+      get_SeriesConfig:function()
+      {
+       return this.scfg;
+      },
+      get__ColorConfig:function()
+      {
+       return this.get_ColorConfig();
+      },
+      get__Config:function()
+      {
+       return this.get_Config();
+      },
+      get__SeriesConfig:function()
+      {
+       return this.get_SeriesConfig();
+      }
+     },{
+      New:function(dataset,cfg,scfg,ccfg)
+      {
+       var r;
+       r=Runtime.New(this,{});
+       r.dataset=dataset;
+       r.cfg=cfg;
+       r.scfg=scfg;
+       r.ccfg=ccfg;
+       r.event=FSharpEvent.New();
+       return r;
+      }
+     }),
+     defaultChartConfig:Runtime.Field(function()
+     {
+      return{
+       Title:"Chart"
+      };
+     }),
+     defaultColorConfig:Runtime.Field(function()
+     {
+      return{
+       PointColor:Runtime.New(Color,{
+        $:0,
+        $0:220,
+        $1:220,
+        $2:220,
+        $3:1
+       }),
+       PointHighlightFill:Runtime.New(Color,{
+        $:1,
+        $0:"#fff"
+       }),
+       PointHighlightStroke:Runtime.New(Color,{
+        $:0,
+        $0:220,
+        $1:220,
+        $2:220,
+        $3:1
+       }),
+       PointStrokeColor:Runtime.New(Color,{
+        $:1,
+        $0:"#fff"
+       })
+      };
+     }),
+     defaultPolarData:Runtime.Field(function()
+     {
+      var _rand_51_1;
+      _rand_51_1=Random.New();
+      return function(label)
+      {
+       return function(data)
+       {
+        var r,g,b,patternInput,highlight,color;
+        r=_rand_51_1.Next2(0,256);
+        g=_rand_51_1.Next2(0,256);
+        b=_rand_51_1.Next2(0,256);
+        patternInput=[Runtime.New(Color,{
+         $:0,
+         $0:r,
+         $1:g,
+         $2:b,
+         $3:1
+        }),Runtime.New(Color,{
+         $:0,
+         $0:r,
+         $1:g,
+         $2:b,
+         $3:0.6
+        })];
+        highlight=patternInput[1];
+        color=patternInput[0];
+        return{
+         Value:data,
+         Color:color,
+         Highlight:highlight,
+         Label:label
+        };
+       };
+      };
+     }),
+     defaultSeriesChartConfig:Runtime.Field(function()
+     {
+      return{
+       XAxis:"x",
+       YAxis:"y",
+       FillColor:Runtime.New(Color,{
+        $:0,
+        $0:220,
+        $1:220,
+        $2:220,
+        $3:0.2
+       }),
+       StrokeColor:Runtime.New(Color,{
+        $:0,
+        $0:220,
+        $1:220,
+        $2:220,
+        $3:1
+       })
+      };
+     })
+    },
+    LiveChart:Runtime.Class({},{
+     Bar:function(dataset)
+     {
+      return BarChart.New({
+       $:1,
+       $0:dataset
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig());
+     },
+     Bar1:function(dataset)
+     {
+      var arg0;
+      arg0=Pervasives.streamWithLabel(dataset);
+      return BarChart.New({
+       $:1,
+       $0:arg0
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig());
+     },
+     Doughnut:function(dataset)
+     {
+      var d;
+      d=Reactive1.Select(dataset,function(t)
+      {
+       return((Charts.defaultPolarData())(t[0]))(t[1]);
+      });
+      return DoughnutChart.New({
+       $:1,
+       $0:d
+      },Charts.defaultChartConfig());
+     },
+     Doughnut1:function(dataset)
+     {
+      return DoughnutChart.New({
+       $:1,
+       $0:dataset
+      },Charts.defaultChartConfig());
+     },
+     Line:function(dataset)
+     {
+      return LineChart.New({
+       $:1,
+       $0:dataset
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     },
+     Line1:function(dataset)
+     {
+      var arg0;
+      arg0=Pervasives.streamWithLabel(dataset);
+      return LineChart.New({
+       $:1,
+       $0:arg0
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     },
+     Pie:function(dataset)
+     {
+      return PieChart.New({
+       $:1,
+       $0:dataset
+      },Charts.defaultChartConfig());
+     },
+     Pie1:function(dataset)
+     {
+      var d;
+      d=Reactive1.Select(dataset,function(t)
+      {
+       return((Charts.defaultPolarData())(t[0]))(t[1]);
+      });
+      return PieChart.New({
+       $:1,
+       $0:d
+      },Charts.defaultChartConfig());
+     },
+     PolarArea:function(dataset)
+     {
+      return PolarAreaChart.New({
+       $:1,
+       $0:dataset
+      },Charts.defaultChartConfig());
+     },
+     PolarArea1:function(dataset)
+     {
+      var d;
+      d=Reactive1.Select(dataset,function(t)
+      {
+       return((Charts.defaultPolarData())(t[0]))(t[1]);
+      });
+      return PolarAreaChart.New({
+       $:1,
+       $0:d
+      },Charts.defaultChartConfig());
+     },
+     Radar:function(dataset)
+     {
+      return RadarChart.New({
+       $:1,
+       $0:dataset
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     },
+     Radar1:function(dataset)
+     {
+      var arg0;
+      arg0=Pervasives.streamWithLabel(dataset);
+      return RadarChart.New({
+       $:1,
+       $0:arg0
+      },Charts.defaultChartConfig(),Charts.defaultSeriesChartConfig(),Charts.defaultColorConfig());
+     }
+    }),
+    Pervasives:{
+     Color:Runtime.Class({
+      toString:function()
+      {
+       var _,h,n,r,g,b,a;
+       if(this.$==1)
+        {
+         h=this.$0;
+         _=h;
+        }
+       else
+        {
+         if(this.$==2)
+          {
+           n=this.$0;
+           _=n;
+          }
+         else
+          {
+           r=this.$0;
+           g=this.$1;
+           b=this.$2;
+           a=this.$3;
+           _="rgba("+Global.String(r)+", "+Global.String(g)+", "+Global.String(b)+", "+a.toFixed(6)+")";
+          }
+        }
+       return _;
+      }
+     }),
+     Reactive:{
+      SequenceOnlyNew:function(streams)
+      {
+       var matchValue,_,xs,x;
+       matchValue=Seq.toList(streams);
+       if(matchValue.$==1)
+        {
+         xs=matchValue.$1;
+         x=matchValue.$0;
+         _=Reactive2.sequence(Reactive1.Select(x,function(value)
+         {
+          return[value];
+         }),xs);
+        }
+       else
+        {
+         _=Reactive1.Return(Seq.empty());
+        }
+       return _;
+      },
+      sequence:function(acc,_arg1)
+      {
+       var _,xs,x,f;
+       if(_arg1.$==1)
+        {
+         xs=_arg1.$1;
+         x=_arg1.$0;
+         f=function(o)
+         {
+          return function(c)
+          {
+           var source2;
+           source2=[c];
+           return Seq.append(o,source2);
+          };
+         };
+         _=Reactive2.sequence(Reactive1.CombineLast(acc,x,f),xs);
+        }
+       else
+        {
+         _=acc;
+        }
+       return _;
+      }
+     },
+     Seq:{
+      headOption:function(s)
+      {
+       var _,arg0;
+       if(Seq.isEmpty(s))
+        {
+         _={
+          $:0
+         };
+        }
+       else
+        {
+         arg0=Seq.nth(0,s);
+         _={
+          $:1,
+          $0:arg0
+         };
+        }
+       return _;
+      }
+     },
+     streamWithLabel:function(stream)
+     {
+      var io,f;
+      io=Reactive1.Aggregate(stream,[0,0],function(tupledArg)
+      {
+       var s;
+       s=tupledArg[0];
+       tupledArg[1];
+       return function(c)
+       {
+        return[s+1,c];
+       };
+      });
+      f=function(tupledArg)
+      {
+       var a,b;
+       a=tupledArg[0];
+       b=tupledArg[1];
+       return[Global.String(a),b];
+      };
+      return Reactive1.Select(io,f);
+     },
+     withIndex:function(s)
+     {
+      var initializer;
+      initializer=function(i)
+      {
+       return Global.String(i);
+      };
+      return Seq.zip(Seq.initInfinite(initializer),s);
+     }
+    },
+    Renderers:{
+     ChartJs:Runtime.Class({},{
+      Render:function(chart,Size,Config,Window)
+      {
+       return ChartJsInternal.RenderCombinedRadarChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),Config,Window);
+      },
+      Render1:function(chart,Size,Config,Window)
+      {
+       var arg0,typ;
+       arg0=Operators.DefaultArg(Config,{});
+       typ={
+        $:0,
+        $0:arg0
+       };
+       return ChartJsInternal.RenderPolarAreaChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),typ,Window);
+      },
+      Render11:function(chart,Size,Config,Window)
+      {
+       return ChartJsInternal.RenderRadarChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),Config,Window);
+      },
+      Render12:function(chart,Size,Config,Window)
+      {
+       return ChartJsInternal.RenderLineChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),Config,Window);
+      },
+      Render2:function(chart,Size,Config,Window)
+      {
+       return ChartJsInternal.RenderCombinedLineChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),Config,Window);
+      },
+      Render21:function(chart,Size,Config,Window)
+      {
+       var arg0,typ;
+       arg0=Operators.DefaultArg(Config,{});
+       typ={
+        $:1,
+        $0:arg0
+       };
+       return ChartJsInternal.RenderPolarAreaChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),typ,Window);
+      },
+      Render3:function(chart,Size,Config,Window)
+      {
+       var arg0,typ;
+       arg0=Operators.DefaultArg(Config,{});
+       typ={
+        $:2,
+        $0:arg0
+       };
+       return ChartJsInternal.RenderPolarAreaChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),typ,Window);
+      },
+      Render4:function(chart,Size,Config,Window)
+      {
+       return ChartJsInternal.RenderBarChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),Config,Window);
+      },
+      Render5:function(chart,Size,Config,Window)
+      {
+       return ChartJsInternal.RenderCombinedBarChart(chart,Operators.DefaultArg(Size,Renderers.defaultSize()),Config,Window);
+      }
+     }),
+     ChartJsInternal:{
+      BatchUpdater:Runtime.Class({
+       Update:function(updater)
+       {
+        var doUpdate,x=this,option,_,msec,arg0;
+        doUpdate=function()
+        {
+         x.handle[0]={
+          $:0
+         };
+         x.count[0]=0;
+         return updater(null);
+        };
+        option=x.handle[0];
+        Option.iter(function(handle)
+        {
+         return clearTimeout(handle);
+        },option);
+        if(x.count[0]<x["maxCount@26"])
+         {
+          Ref.incr(x.count);
+          msec=x["interval@25"];
+          arg0=setTimeout(doUpdate,msec);
+          _=void(x.handle[0]={
+           $:1,
+           $0:arg0
+          });
+         }
+        else
+         {
+          _=doUpdate(null);
+         }
+        return _;
+       }
+      },{
+       New:function(interval,maxCount)
+       {
+        var r;
+        r=Runtime.New(this,{});
+        r["interval@25"]=Operators.DefaultArg(interval,75);
+        r["maxCount@26"]=Operators.DefaultArg(maxCount,10);
+        r.handle=[{
+         $:0
+        }];
+        r.count=[0];
+        return r;
+       }
+      }),
+      RenderBarChart:function(chart,size,cfg,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var initial,data,mapping,mapping1,defaultValue,options,rendered,upd,fin,dataSet,remove,add;
+         initial=ChartJsInternal.mkInitial(chart.get_DataSet(),window);
+         mapping=function(tuple)
+         {
+          return tuple[0];
+         };
+         mapping1=function(tuple)
+         {
+          return tuple[1];
+         };
+         data={
+          labels:Arrays.map(mapping,initial),
+          datasets:[{
+           label:chart.get__Config().Title,
+           fillColor:Global.String(chart.get__SeriesConfig().FillColor),
+           strokeColor:Global.String(chart.get__SeriesConfig().StrokeColor),
+           data:Arrays.map(mapping1,initial)
+          }]
+         };
+         defaultValue={
+          barShowStroke:true
+         };
+         options=Operators.DefaultArg(cfg,defaultValue);
+         rendered=(new Chart(ctx)).Bar(data,options);
+         upd=function(tupledArg)
+         {
+          var i,d,ds,s;
+          i=tupledArg[0];
+          d=tupledArg[1];
+          ds=rendered.datasets;
+          s=Arrays.get(ds,0).bars;
+          Arrays.get(s,i).value=d(Arrays.get(s,i).value);
+          return;
+         };
+         fin=function()
+         {
+          return rendered.update();
+         };
+         ChartJsInternal.registerUpdater(chart,upd,fin);
+         dataSet=chart.get_DataSet();
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData();
+          };
+         };
+         add=function()
+         {
+          return function(tupledArg)
+          {
+           var label,data1;
+           label=tupledArg[0];
+           data1=tupledArg[1];
+           return rendered.addData([data1],label);
+          };
+         };
+         return ChartJsInternal.onEvent(dataSet,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      RenderCombinedBarChart:function(chart,size,cfg,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var chooser,source,e,labels,data,x,mapping,source2,defaultValue,options,rendered,x1,action,mapping2,source3,dataSet,streams,l,remove,add;
+         chooser=function(chart1)
+         {
+          var matchValue,_,s,arg0;
+          matchValue=chart1.get_DataSet();
+          if(matchValue.$==1)
+           {
+            _={
+             $:0
+            };
+           }
+          else
+           {
+            s=matchValue.$0;
+            arg0=Seq.map(function(tuple)
+            {
+             return tuple[0];
+            },s);
+            _={
+             $:1,
+             $0:arg0
+            };
+           }
+          return _;
+         };
+         source=chart.get_Charts();
+         e=Seq.choose(chooser,source);
+         labels=Seq.length(e)>0?Seq.maxBy(function(source1)
+         {
+          return Seq.length(source1);
+         },e):Seq.empty();
+         x=chart.get_Charts();
+         mapping=function(chart1)
+         {
+          var initials,mapping1;
+          initials=ChartJsInternal.mkInitial(chart1.get_DataSet(),window);
+          mapping1=function(tuple)
+          {
+           return tuple[1];
+          };
+          return{
+           label:chart1.get__Config().Title,
+           fillColor:Global.String(chart1.get__SeriesConfig().FillColor),
+           strokeColor:Global.String(chart1.get__SeriesConfig().StrokeColor),
+           data:Arrays.map(mapping1,initials)
+          };
+         };
+         source2=Seq.map(mapping,x);
+         data={
+          labels:Seq.toArray(labels),
+          datasets:Seq.toArray(source2)
+         };
+         defaultValue={
+          barShowStroke:true
+         };
+         options=Operators.DefaultArg(cfg,defaultValue);
+         rendered=(new Chart(ctx)).Bar(data,options);
+         x1=chart.get_Charts();
+         action=function(i)
+         {
+          return function(chart1)
+          {
+           var upd,fin;
+           upd=function(tupledArg)
+           {
+            var j,d,ds,s;
+            j=tupledArg[0];
+            d=tupledArg[1];
+            ds=rendered.datasets;
+            s=Arrays.get(ds,i).bars;
+            Arrays.get(s,j).value=d(Arrays.get(s,j).value);
+            return;
+           };
+           fin=function()
+           {
+            return rendered.update();
+           };
+           return ChartJsInternal.registerUpdater(chart1,upd,fin);
+          };
+         };
+         Seq.iteri(action,x1);
+         mapping2=function(chart1)
+         {
+          return chart1.get_DataSet();
+         };
+         source3=chart.get_Charts();
+         dataSet=Seq.map(mapping2,source3);
+         streams=ChartJsInternal.extractStreams(dataSet);
+         l=Seq.length(chart.get_Charts());
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData();
+          };
+         };
+         add=function()
+         {
+          return function(tupledArg)
+          {
+           var arr,label;
+           arr=tupledArg[0];
+           label=tupledArg[1];
+           return rendered.addData(arr,label);
+          };
+         };
+         return ChartJsInternal.onCombinedEvent(streams,l,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      RenderCombinedLineChart:function(chart,size,cfg,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var chooser,mapping,mapping1,source1,source2,x,labels,data,x1,mapping2,source3,defaultValue,options,rendered,x2,action,mapping4,source4,dataSet,streams,l,remove,add;
+         chooser=function(chart1)
+         {
+          var matchValue,_,arg0;
+          matchValue=chart1.get_DataSet();
+          if(matchValue.$==1)
+           {
+            _={
+             $:0
+            };
+           }
+          else
+           {
+            matchValue.$0;
+            arg0=ChartJsInternal.mkInitial(matchValue,window);
+            _={
+             $:1,
+             $0:arg0
+            };
+           }
+          return _;
+         };
+         mapping=function(tuple)
+         {
+          return tuple[0];
+         };
+         mapping1=function(source)
+         {
+          return Seq.map(mapping,source);
+         };
+         source1=chart.get_Charts();
+         source2=Seq.choose(chooser,source1);
+         x=Seq.map(mapping1,source2);
+         labels=Seq.length(x)>0?Seq.maxBy(function(source)
+         {
+          return Seq.length(source);
+         },x):Seq.empty();
+         x1=chart.get_Charts();
+         mapping2=function(chart1)
+         {
+          var initials,mapping3;
+          initials=ChartJsInternal.mkInitial(chart1.get_DataSet(),window);
+          mapping3=function(tuple)
+          {
+           return tuple[1];
+          };
+          return{
+           label:chart1.get__Config().Title,
+           fillColor:Global.String(chart1.get__SeriesConfig().FillColor),
+           strokeColor:Global.String(chart1.get__SeriesConfig().StrokeColor),
+           pointColor:Global.String(chart1.get__ColorConfig().PointColor),
+           pointHighlightFill:Global.String(chart1.get__ColorConfig().PointHighlightFill),
+           pointHighlightStroke:Global.String(chart1.get__ColorConfig().PointHighlightStroke),
+           pointStrokeColor:Global.String(chart1.get__ColorConfig().PointStrokeColor),
+           data:Arrays.map(mapping3,initials)
+          };
+         };
+         source3=Seq.map(mapping2,x1);
+         data={
+          labels:Seq.toArray(labels),
+          datasets:Seq.toArray(source3)
+         };
+         defaultValue={
+          bezierCurve:false,
+          datasetFill:false
+         };
+         options=Operators.DefaultArg(cfg,defaultValue);
+         rendered=(new Chart(ctx)).Line(data,options);
+         x2=chart.get_Charts();
+         action=function(i)
+         {
+          return function(chart1)
+          {
+           var upd,fin;
+           upd=function(tupledArg)
+           {
+            var j,d,ds,s;
+            j=tupledArg[0];
+            d=tupledArg[1];
+            ds=rendered.datasets;
+            s=Arrays.get(ds,i).points;
+            Arrays.get(s,j).value=d(Arrays.get(s,j).value);
+            return;
+           };
+           fin=function()
+           {
+            return rendered.update();
+           };
+           return ChartJsInternal.registerUpdater(chart1,upd,fin);
+          };
+         };
+         Seq.iteri(action,x2);
+         mapping4=function(chart1)
+         {
+          return chart1.get_DataSet();
+         };
+         source4=chart.get_Charts();
+         dataSet=Seq.map(mapping4,source4);
+         streams=ChartJsInternal.extractStreams(dataSet);
+         l=Seq.length(chart.get_Charts());
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData();
+          };
+         };
+         add=function()
+         {
+          return function(tupledArg)
+          {
+           var arr,label;
+           arr=tupledArg[0];
+           label=tupledArg[1];
+           return rendered.addData(arr,label);
+          };
+         };
+         return ChartJsInternal.onCombinedEvent(streams,l,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      RenderCombinedRadarChart:function(chart,size,cfg,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var chooser,source,e,labels,data,x,mapping,source2,defaultValue,options,rendered,x1,action,mapping2,source3,dataSet,streams,l,remove,add;
+         chooser=function(chart1)
+         {
+          var matchValue,_,s,arg0;
+          matchValue=chart1.get_DataSet();
+          if(matchValue.$==1)
+           {
+            _={
+             $:0
+            };
+           }
+          else
+           {
+            s=matchValue.$0;
+            arg0=Seq.map(function(tuple)
+            {
+             return tuple[0];
+            },s);
+            _={
+             $:1,
+             $0:arg0
+            };
+           }
+          return _;
+         };
+         source=chart.get_Charts();
+         e=Seq.choose(chooser,source);
+         labels=Seq.length(e)>0?Seq.maxBy(function(source1)
+         {
+          return Seq.length(source1);
+         },e):Seq.empty();
+         x=chart.get_Charts();
+         mapping=function(chart1)
+         {
+          var initials,mapping1;
+          initials=ChartJsInternal.mkInitial(chart1.get_DataSet(),window);
+          mapping1=function(tuple)
+          {
+           return tuple[1];
+          };
+          return{
+           label:chart1.get__Config().Title,
+           fillColor:Global.String(chart1.get__SeriesConfig().FillColor),
+           strokeColor:Global.String(chart1.get__SeriesConfig().StrokeColor),
+           pointColor:Global.String(chart1.get__ColorConfig().PointColor),
+           pointHighlightFill:Global.String(chart1.get__ColorConfig().PointHighlightFill),
+           pointHighlightStroke:Global.String(chart1.get__ColorConfig().PointHighlightStroke),
+           pointStrokeColor:Global.String(chart1.get__ColorConfig().PointStrokeColor),
+           data:Arrays.map(mapping1,initials)
+          };
+         };
+         source2=Seq.map(mapping,x);
+         data={
+          labels:Seq.toArray(labels),
+          datasets:Seq.toArray(source2)
+         };
+         defaultValue={
+          datasetFill:true,
+          datasetStroke:true
+         };
+         options=Operators.DefaultArg(cfg,defaultValue);
+         rendered=(new Chart(ctx)).Radar(data,options);
+         x1=chart.get_Charts();
+         action=function(i)
+         {
+          return function(chart1)
+          {
+           var upd,fin;
+           upd=function(tupledArg)
+           {
+            var j,d,ds,s;
+            j=tupledArg[0];
+            d=tupledArg[1];
+            ds=rendered.datasets;
+            s=Arrays.get(ds,i).points;
+            Arrays.get(s,j).value=d(Arrays.get(s,j).value);
+            return;
+           };
+           fin=function()
+           {
+            return rendered.update();
+           };
+           return ChartJsInternal.registerUpdater(chart1,upd,fin);
+          };
+         };
+         Seq.iteri(action,x1);
+         mapping2=function(chart1)
+         {
+          return chart1.get_DataSet();
+         };
+         source3=chart.get_Charts();
+         dataSet=Seq.map(mapping2,source3);
+         streams=ChartJsInternal.extractStreams(dataSet);
+         l=Seq.length(chart.get_Charts());
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData();
+          };
+         };
+         add=function()
+         {
+          return function(tupledArg)
+          {
+           var arr,label;
+           arr=tupledArg[0];
+           label=tupledArg[1];
+           return rendered.addData(arr,label);
+          };
+         };
+         return ChartJsInternal.onCombinedEvent(streams,l,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      RenderLineChart:function(chart,size,cfg,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var initial,data,mapping,mapping1,defaultValue,options,rendered,upd,fin,dataSet,remove,add;
+         initial=ChartJsInternal.mkInitial(chart.get_DataSet(),window);
+         mapping=function(tuple)
+         {
+          return tuple[0];
+         };
+         mapping1=function(tuple)
+         {
+          return tuple[1];
+         };
+         data={
+          labels:Arrays.map(mapping,initial),
+          datasets:[{
+           label:chart.get__Config().Title,
+           fillColor:Global.String(chart.get__SeriesConfig().FillColor),
+           strokeColor:Global.String(chart.get__SeriesConfig().StrokeColor),
+           pointColor:Global.String(chart.get__ColorConfig().PointColor),
+           pointHighlightFill:Global.String(chart.get__ColorConfig().PointHighlightFill),
+           pointHighlightStroke:Global.String(chart.get__ColorConfig().PointHighlightStroke),
+           pointStrokeColor:Global.String(chart.get__ColorConfig().PointStrokeColor),
+           data:Arrays.map(mapping1,initial)
+          }]
+         };
+         defaultValue={
+          bezierCurve:false,
+          datasetFill:false
+         };
+         options=Operators.DefaultArg(cfg,defaultValue);
+         rendered=(new Chart(ctx)).Line(data,options);
+         upd=function(tupledArg)
+         {
+          var i,d,ds,s;
+          i=tupledArg[0];
+          d=tupledArg[1];
+          ds=rendered.datasets;
+          s=Arrays.get(ds,0).points;
+          Arrays.get(s,i).value=d(Arrays.get(s,i).value);
+          return;
+         };
+         fin=function()
+         {
+          return rendered.update();
+         };
+         ChartJsInternal.registerUpdater(chart,upd,fin);
+         dataSet=chart.get_DataSet();
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData();
+          };
+         };
+         add=function()
+         {
+          return function(tupledArg)
+          {
+           var label,data1;
+           label=tupledArg[0];
+           data1=tupledArg[1];
+           return rendered.addData([data1],label);
+          };
+         };
+         return ChartJsInternal.onEvent(dataSet,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      RenderPolarAreaChart:function(chart,size,typ,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var initial,convert,data,rendered,_,opts,opts1,opts2,arg00,dataSet,remove,add;
+         initial=ChartJsInternal.mkInitial(chart.get_DataSet(),{
+          $:0
+         });
+         convert=function(e)
+         {
+          return typ.$==1?{
+           color:Global.String(e.Color),
+           highlight:Global.String(e.Highlight),
+           value:e.Value,
+           label:e.Label
+          }:typ.$==2?{
+           color:Global.String(e.Color),
+           highlight:Global.String(e.Highlight),
+           value:e.Value,
+           label:e.Label
+          }:{
+           color:Global.String(e.Color),
+           highlight:Global.String(e.Highlight),
+           value:e.Value,
+           label:e.Label
+          };
+         };
+         data=Arrays.map(convert,initial);
+         if(typ.$==1)
+          {
+           opts=typ.$0;
+           _=(new Chart(ctx)).Pie(data,opts);
+          }
+         else
+          {
+           if(typ.$==2)
+            {
+             opts1=typ.$0;
+             _=(new Chart(ctx)).Doughnut(data,opts1);
+            }
+           else
+            {
+             opts2=typ.$0;
+             _=(new Chart(ctx)).PolarArea(data,opts2);
+            }
+          }
+         rendered=_;
+         arg00=function(tupledArg)
+         {
+          var i,d,s;
+          i=tupledArg[0];
+          d=tupledArg[1];
+          s=rendered.segments;
+          Arrays.get(s,i).value=d(Arrays.get(s,i).value);
+          return rendered.update();
+         };
+         chart.OnUpdate(arg00);
+         dataSet=chart.get_DataSet();
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData(0);
+          };
+         };
+         add=function(size1)
+         {
+          return function(data1)
+          {
+           return rendered.addData(convert(data1),size1);
+          };
+         };
+         return ChartJsInternal.onEvent(dataSet,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      RenderRadarChart:function(chart,size,cfg,window)
+      {
+       var k;
+       k=function()
+       {
+        return function(ctx)
+        {
+         var initial,data,mapping,mapping1,defaultValue,options,rendered,upd,fin,dataSet,remove,add;
+         initial=ChartJsInternal.mkInitial(chart.get_DataSet(),window);
+         mapping=function(tuple)
+         {
+          return tuple[0];
+         };
+         mapping1=function(tuple)
+         {
+          return tuple[1];
+         };
+         data={
+          labels:Arrays.map(mapping,initial),
+          datasets:[{
+           label:chart.get__Config().Title,
+           fillColor:Global.String(chart.get__SeriesConfig().FillColor),
+           strokeColor:Global.String(chart.get__SeriesConfig().StrokeColor),
+           pointColor:Global.String(chart.get__ColorConfig().PointColor),
+           pointHighlightFill:Global.String(chart.get__ColorConfig().PointHighlightFill),
+           pointHighlightStroke:Global.String(chart.get__ColorConfig().PointHighlightStroke),
+           pointStrokeColor:Global.String(chart.get__ColorConfig().PointStrokeColor),
+           data:Arrays.map(mapping1,initial)
+          }]
+         };
+         defaultValue={
+          datasetFill:true,
+          datasetStroke:true
+         };
+         options=Operators.DefaultArg(cfg,defaultValue);
+         rendered=(new Chart(ctx)).Radar(data,options);
+         upd=function(tupledArg)
+         {
+          var i,d,ds,s;
+          i=tupledArg[0];
+          d=tupledArg[1];
+          ds=rendered.datasets;
+          s=Arrays.get(ds,0).points;
+          Arrays.get(s,i).value=d(Arrays.get(s,i).value);
+          return;
+         };
+         fin=function()
+         {
+          return rendered.update();
+         };
+         ChartJsInternal.registerUpdater(chart,upd,fin);
+         dataSet=chart.get_DataSet();
+         remove=function()
+         {
+          return function()
+          {
+           return rendered.removeData();
+          };
+         };
+         add=function()
+         {
+          return function(tupledArg)
+          {
+           var label,data1;
+           label=tupledArg[0];
+           data1=tupledArg[1];
+           return rendered.addData([data1],label);
+          };
+         };
+         return ChartJsInternal.onEvent(dataSet,window,remove,add);
+        };
+       };
+       return ChartJsInternal.withNewCanvas(size,k);
+      },
+      extractStreams:function(dataSet)
+      {
+       var mapping,chooser,source,_arg00_;
+       mapping=function(i)
+       {
+        return function(data)
+        {
+         var _,s,arg0;
+         if(data.$==0)
+          {
+           _={
+            $:0
+           };
+          }
+         else
+          {
+           s=data.$0;
+           arg0=Reactive1.Select(s,function(d)
+           {
+            return[i,d];
+           });
+           _={
+            $:1,
+            $0:arg0
+           };
+          }
+         return _;
+        };
+       };
+       chooser=function(x)
+       {
+        return x;
+       };
+       source=Seq.mapi(mapping,dataSet);
+       _arg00_=Seq.choose(chooser,source);
+       return Reactive2.SequenceOnlyNew(_arg00_);
+      },
+      mkInitial:function(dataSet,window)
+      {
+       var _,s,folder,state;
+       if(dataSet.$==0)
+        {
+         s=dataSet.$0;
+         folder=function(s1)
+         {
+          return function(w)
+          {
+           var skp;
+           skp=Arrays.length(s1)-w;
+           return skp>=Arrays.length(s1)?[]:skp<=0?s1:Slice.array(s1,{
+            $:1,
+            $0:skp
+           },{
+            $:0
+           });
+          };
+         };
+         state=Seq.toArray(s);
+         _=Option.fold(folder,state,window);
+        }
+       else
+        {
+         dataSet.$0;
+         _=[];
+        }
+       return _;
+      },
+      onCombinedEvent:function(streams,l,window,remove,add)
+      {
+       var size,arg00;
+       size=[0];
+       arg00=function(data)
+       {
+        var action,arr,action1,action2,option;
+        action=function(window1)
+        {
+         return size[0]>=window1?(remove(window1))(size[0]):null;
+        };
+        Option.iter(action,window);
+        arr=Seq.toArray(Seq.delay(function()
+        {
+         return Seq.map(function()
+         {
+          return 0;
+         },Operators.range(1,l));
+        }));
+        action1=function(tupledArg)
+        {
+         var i,_arg1,l1;
+         i=tupledArg[0];
+         _arg1=tupledArg[1];
+         l1=_arg1[1];
+         _arg1[0];
+         return Arrays.set(arr,i,l1);
+        };
+        Seq.iter(action1,data);
+        action2=function(tupledArg)
+        {
+         var _arg3,label;
+         tupledArg[0];
+         _arg3=tupledArg[1];
+         label=_arg3[0];
+         return(add(size[0]))([arr,label]);
+        };
+        option=Seq1.headOption(data);
+        Option.iter(action2,option);
+        return Ref.incr(size);
+       };
+       return Util.addListener(streams,arg00);
+      },
+      onEvent:function(dataSet,window,remove,add)
+      {
+       var _,o,size,arg00;
+       if(dataSet.$==1)
+        {
+         o=dataSet.$0;
+         size=[0];
+         arg00=function(data)
+         {
+          var action;
+          action=function(window1)
+          {
+           return size[0]>=window1?(remove(window1))(size[0]):null;
+          };
+          Option.iter(action,window);
+          (add(size[0]))(data);
+          return Ref.incr(size);
+         };
+         _=Util.addListener(o,arg00);
+        }
+       else
+        {
+         _=null;
+        }
+       return _;
+      },
+      registerUpdater:function(mChart,upd,fin)
+      {
+       var bu,arg00;
+       bu=BatchUpdater.New({
+        $:0
+       },{
+        $:0
+       });
+       arg00=function(tupledArg)
+       {
+        var i,d;
+        i=tupledArg[0];
+        d=tupledArg[1];
+        upd([i,d]);
+        return bu.Update(fin);
+       };
+       return mChart.OnUpdate(arg00);
+      },
+      withNewCanvas:function(size,k)
+      {
+       var width,height,arg00,arg001,arg002;
+       width=size.$0;
+       height=size.$1;
+       arg00=Global.String(width);
+       arg001=Global.String(height);
+       arg002=function(el)
+       {
+        var ctx;
+        ctx=el.getContext("2d");
+        return(k(el))(ctx);
+       };
+       return Doc.Element("canvas",List.ofArray([AttrProxy.Create("width",arg00),AttrProxy.Create("height",arg001),AttrModule.OnAfterRender(arg002)]),Runtime.New(T,{
+        $:0
+       }));
+      }
+     },
+     defaultSize:Runtime.Field(function()
+     {
+      return{
+       $:0,
+       $0:500,
+       $1:200
+      };
+     })
+    }
+   }
+  }
+ });
+ Runtime.OnInit(function()
+ {
+  Charting=Runtime.Safe(Global.WebSharper.Charting);
+  Charts=Runtime.Safe(Charting.Charts);
+  BarChart=Runtime.Safe(Charts.BarChart);
+  Pervasives=Runtime.Safe(Charting.Pervasives);
+  CompositeChart=Runtime.Safe(Charts.CompositeChart);
+  DoughnutChart=Runtime.Safe(Charts.DoughnutChart);
+  Seq=Runtime.Safe(Global.WebSharper.Seq);
+  LineChart=Runtime.Safe(Charts.LineChart);
+  PieChart=Runtime.Safe(Charts.PieChart);
+  PolarAreaChart=Runtime.Safe(Charts.PolarAreaChart);
+  RadarChart=Runtime.Safe(Charts.RadarChart);
+  Util=Runtime.Safe(Global.WebSharper.Util);
+  Control=Runtime.Safe(Global.WebSharper.Control);
+  FSharpEvent=Runtime.Safe(Control.FSharpEvent);
+  IntelliFactory=Runtime.Safe(Global.IntelliFactory);
+  Reactive=Runtime.Safe(IntelliFactory.Reactive);
+  Reactive1=Runtime.Safe(Reactive.Reactive);
+  Color=Runtime.Safe(Pervasives.Color);
+  Random=Runtime.Safe(Global.WebSharper.Random);
+  Reactive2=Runtime.Safe(Pervasives.Reactive);
+  Renderers=Runtime.Safe(Charting.Renderers);
+  ChartJsInternal=Runtime.Safe(Renderers.ChartJsInternal);
+  Operators=Runtime.Safe(Global.WebSharper.Operators);
+  Option=Runtime.Safe(Global.WebSharper.Option);
+  clearTimeout=Runtime.Safe(Global.clearTimeout);
+  Ref=Runtime.Safe(Global.WebSharper.Ref);
+  setTimeout=Runtime.Safe(Global.setTimeout);
+  Arrays=Runtime.Safe(Global.WebSharper.Arrays);
+  Chart=Runtime.Safe(Global.Chart);
+  Slice=Runtime.Safe(Global.WebSharper.Slice);
+  Seq1=Runtime.Safe(Pervasives.Seq);
+  BatchUpdater=Runtime.Safe(ChartJsInternal.BatchUpdater);
+  UI=Runtime.Safe(Global.WebSharper.UI);
+  Next=Runtime.Safe(UI.Next);
+  Doc=Runtime.Safe(Next.Doc);
+  List=Runtime.Safe(Global.WebSharper.List);
+  AttrProxy=Runtime.Safe(Next.AttrProxy);
+  AttrModule=Runtime.Safe(Next.AttrModule);
+  return T=Runtime.Safe(List.T);
+ });
+ Runtime.OnLoad(function()
+ {
+  Renderers.defaultSize();
+  Charts.defaultSeriesChartConfig();
+  Charts.defaultPolarData();
+  Charts.defaultColorConfig();
+  Charts.defaultChartConfig();
+  return;
+ });
+}());
+
 (function () {
     var lastTime = 0;
     var vendors = ['webkit', 'moz'];
@@ -17248,48 +20340,296 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
         };
 }());
 ;
+/*!
+ * Chart.js
+ * http://chartjs.org/
+ * Version: 1.0.2
+ *
+ * Copyright 2015 Nick Downie
+ * Released under the MIT license
+ * https://github.com/nnnick/Chart.js/blob/master/LICENSE.md
+ */
+(function(){"use strict";var t=this,i=t.Chart,e=function(t){this.canvas=t.canvas,this.ctx=t;var i=function(t,i){return t["offset"+i]?t["offset"+i]:document.defaultView.getComputedStyle(t).getPropertyValue(i)},e=this.width=i(t.canvas,"Width"),n=this.height=i(t.canvas,"Height");t.canvas.width=e,t.canvas.height=n;var e=this.width=t.canvas.width,n=this.height=t.canvas.height;return this.aspectRatio=this.width/this.height,s.retinaScale(this),this};e.defaults={global:{animation:!0,animationSteps:60,animationEasing:"easeOutQuart",showScale:!0,scaleOverride:!1,scaleSteps:null,scaleStepWidth:null,scaleStartValue:null,scaleLineColor:"rgba(0,0,0,.1)",scaleLineWidth:1,scaleShowLabels:!0,scaleLabel:"<%=value%>",scaleIntegersOnly:!0,scaleBeginAtZero:!1,scaleFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",scaleFontSize:12,scaleFontStyle:"normal",scaleFontColor:"#666",responsive:!1,maintainAspectRatio:!0,showTooltips:!0,customTooltips:!1,tooltipEvents:["mousemove","touchstart","touchmove","mouseout"],tooltipFillColor:"rgba(0,0,0,0.8)",tooltipFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",tooltipFontSize:14,tooltipFontStyle:"normal",tooltipFontColor:"#fff",tooltipTitleFontFamily:"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",tooltipTitleFontSize:14,tooltipTitleFontStyle:"bold",tooltipTitleFontColor:"#fff",tooltipYPadding:6,tooltipXPadding:6,tooltipCaretSize:8,tooltipCornerRadius:6,tooltipXOffset:10,tooltipTemplate:"<%if (label){%><%=label%>: <%}%><%= value %>",multiTooltipTemplate:"<%= value %>",multiTooltipKeyBackground:"#fff",onAnimationProgress:function(){},onAnimationComplete:function(){}}},e.types={};var s=e.helpers={},n=s.each=function(t,i,e){var s=Array.prototype.slice.call(arguments,3);if(t)if(t.length===+t.length){var n;for(n=0;n<t.length;n++)i.apply(e,[t[n],n].concat(s))}else for(var o in t)i.apply(e,[t[o],o].concat(s))},o=s.clone=function(t){var i={};return n(t,function(e,s){t.hasOwnProperty(s)&&(i[s]=e)}),i},a=s.extend=function(t){return n(Array.prototype.slice.call(arguments,1),function(i){n(i,function(e,s){i.hasOwnProperty(s)&&(t[s]=e)})}),t},h=s.merge=function(){var t=Array.prototype.slice.call(arguments,0);return t.unshift({}),a.apply(null,t)},l=s.indexOf=function(t,i){if(Array.prototype.indexOf)return t.indexOf(i);for(var e=0;e<t.length;e++)if(t[e]===i)return e;return-1},r=(s.where=function(t,i){var e=[];return s.each(t,function(t){i(t)&&e.push(t)}),e},s.findNextWhere=function(t,i,e){e||(e=-1);for(var s=e+1;s<t.length;s++){var n=t[s];if(i(n))return n}},s.findPreviousWhere=function(t,i,e){e||(e=t.length);for(var s=e-1;s>=0;s--){var n=t[s];if(i(n))return n}},s.inherits=function(t){var i=this,e=t&&t.hasOwnProperty("constructor")?t.constructor:function(){return i.apply(this,arguments)},s=function(){this.constructor=e};return s.prototype=i.prototype,e.prototype=new s,e.extend=r,t&&a(e.prototype,t),e.__super__=i.prototype,e}),c=s.noop=function(){},u=s.uid=function(){var t=0;return function(){return"chart-"+t++}}(),d=s.warn=function(t){window.console&&"function"==typeof window.console.warn&&console.warn(t)},p=s.amd="function"==typeof define&&define.amd,f=s.isNumber=function(t){return!isNaN(parseFloat(t))&&isFinite(t)},g=s.max=function(t){return Math.max.apply(Math,t)},m=s.min=function(t){return Math.min.apply(Math,t)},v=(s.cap=function(t,i,e){if(f(i)){if(t>i)return i}else if(f(e)&&e>t)return e;return t},s.getDecimalPlaces=function(t){return t%1!==0&&f(t)?t.toString().split(".")[1].length:0}),S=s.radians=function(t){return t*(Math.PI/180)},x=(s.getAngleFromPoint=function(t,i){var e=i.x-t.x,s=i.y-t.y,n=Math.sqrt(e*e+s*s),o=2*Math.PI+Math.atan2(s,e);return 0>e&&0>s&&(o+=2*Math.PI),{angle:o,distance:n}},s.aliasPixel=function(t){return t%2===0?0:.5}),y=(s.splineCurve=function(t,i,e,s){var n=Math.sqrt(Math.pow(i.x-t.x,2)+Math.pow(i.y-t.y,2)),o=Math.sqrt(Math.pow(e.x-i.x,2)+Math.pow(e.y-i.y,2)),a=s*n/(n+o),h=s*o/(n+o);return{inner:{x:i.x-a*(e.x-t.x),y:i.y-a*(e.y-t.y)},outer:{x:i.x+h*(e.x-t.x),y:i.y+h*(e.y-t.y)}}},s.calculateOrderOfMagnitude=function(t){return Math.floor(Math.log(t)/Math.LN10)}),C=(s.calculateScaleRange=function(t,i,e,s,n){var o=2,a=Math.floor(i/(1.5*e)),h=o>=a,l=g(t),r=m(t);l===r&&(l+=.5,r>=.5&&!s?r-=.5:l+=.5);for(var c=Math.abs(l-r),u=y(c),d=Math.ceil(l/(1*Math.pow(10,u)))*Math.pow(10,u),p=s?0:Math.floor(r/(1*Math.pow(10,u)))*Math.pow(10,u),f=d-p,v=Math.pow(10,u),S=Math.round(f/v);(S>a||a>2*S)&&!h;)if(S>a)v*=2,S=Math.round(f/v),S%1!==0&&(h=!0);else if(n&&u>=0){if(v/2%1!==0)break;v/=2,S=Math.round(f/v)}else v/=2,S=Math.round(f/v);return h&&(S=o,v=f/S),{steps:S,stepValue:v,min:p,max:p+S*v}},s.template=function(t,i){function e(t,i){var e=/\W/.test(t)?new Function("obj","var p=[],print=function(){p.push.apply(p,arguments);};with(obj){p.push('"+t.replace(/[\r\t\n]/g," ").split("<%").join("	").replace(/((^|%>)[^\t]*)'/g,"$1\r").replace(/\t=(.*?)%>/g,"',$1,'").split("	").join("');").split("%>").join("p.push('").split("\r").join("\\'")+"');}return p.join('');"):s[t]=s[t];return i?e(i):e}if(t instanceof Function)return t(i);var s={};return e(t,i)}),w=(s.generateLabels=function(t,i,e,s){var o=new Array(i);return labelTemplateString&&n(o,function(i,n){o[n]=C(t,{value:e+s*(n+1)})}),o},s.easingEffects={linear:function(t){return t},easeInQuad:function(t){return t*t},easeOutQuad:function(t){return-1*t*(t-2)},easeInOutQuad:function(t){return(t/=.5)<1?.5*t*t:-0.5*(--t*(t-2)-1)},easeInCubic:function(t){return t*t*t},easeOutCubic:function(t){return 1*((t=t/1-1)*t*t+1)},easeInOutCubic:function(t){return(t/=.5)<1?.5*t*t*t:.5*((t-=2)*t*t+2)},easeInQuart:function(t){return t*t*t*t},easeOutQuart:function(t){return-1*((t=t/1-1)*t*t*t-1)},easeInOutQuart:function(t){return(t/=.5)<1?.5*t*t*t*t:-0.5*((t-=2)*t*t*t-2)},easeInQuint:function(t){return 1*(t/=1)*t*t*t*t},easeOutQuint:function(t){return 1*((t=t/1-1)*t*t*t*t+1)},easeInOutQuint:function(t){return(t/=.5)<1?.5*t*t*t*t*t:.5*((t-=2)*t*t*t*t+2)},easeInSine:function(t){return-1*Math.cos(t/1*(Math.PI/2))+1},easeOutSine:function(t){return 1*Math.sin(t/1*(Math.PI/2))},easeInOutSine:function(t){return-0.5*(Math.cos(Math.PI*t/1)-1)},easeInExpo:function(t){return 0===t?1:1*Math.pow(2,10*(t/1-1))},easeOutExpo:function(t){return 1===t?1:1*(-Math.pow(2,-10*t/1)+1)},easeInOutExpo:function(t){return 0===t?0:1===t?1:(t/=.5)<1?.5*Math.pow(2,10*(t-1)):.5*(-Math.pow(2,-10*--t)+2)},easeInCirc:function(t){return t>=1?t:-1*(Math.sqrt(1-(t/=1)*t)-1)},easeOutCirc:function(t){return 1*Math.sqrt(1-(t=t/1-1)*t)},easeInOutCirc:function(t){return(t/=.5)<1?-0.5*(Math.sqrt(1-t*t)-1):.5*(Math.sqrt(1-(t-=2)*t)+1)},easeInElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:1==(t/=1)?1:(e||(e=.3),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),-(s*Math.pow(2,10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e)))},easeOutElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:1==(t/=1)?1:(e||(e=.3),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),s*Math.pow(2,-10*t)*Math.sin(2*(1*t-i)*Math.PI/e)+1)},easeInOutElastic:function(t){var i=1.70158,e=0,s=1;return 0===t?0:2==(t/=.5)?1:(e||(e=.3*1.5),s<Math.abs(1)?(s=1,i=e/4):i=e/(2*Math.PI)*Math.asin(1/s),1>t?-.5*s*Math.pow(2,10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e):s*Math.pow(2,-10*(t-=1))*Math.sin(2*(1*t-i)*Math.PI/e)*.5+1)},easeInBack:function(t){var i=1.70158;return 1*(t/=1)*t*((i+1)*t-i)},easeOutBack:function(t){var i=1.70158;return 1*((t=t/1-1)*t*((i+1)*t+i)+1)},easeInOutBack:function(t){var i=1.70158;return(t/=.5)<1?.5*t*t*(((i*=1.525)+1)*t-i):.5*((t-=2)*t*(((i*=1.525)+1)*t+i)+2)},easeInBounce:function(t){return 1-w.easeOutBounce(1-t)},easeOutBounce:function(t){return(t/=1)<1/2.75?7.5625*t*t:2/2.75>t?1*(7.5625*(t-=1.5/2.75)*t+.75):2.5/2.75>t?1*(7.5625*(t-=2.25/2.75)*t+.9375):1*(7.5625*(t-=2.625/2.75)*t+.984375)},easeInOutBounce:function(t){return.5>t?.5*w.easeInBounce(2*t):.5*w.easeOutBounce(2*t-1)+.5}}),b=s.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(t){return window.setTimeout(t,1e3/60)}}(),P=s.cancelAnimFrame=function(){return window.cancelAnimationFrame||window.webkitCancelAnimationFrame||window.mozCancelAnimationFrame||window.oCancelAnimationFrame||window.msCancelAnimationFrame||function(t){return window.clearTimeout(t,1e3/60)}}(),L=(s.animationLoop=function(t,i,e,s,n,o){var a=0,h=w[e]||w.linear,l=function(){a++;var e=a/i,r=h(e);t.call(o,r,e,a),s.call(o,r,e),i>a?o.animationFrame=b(l):n.apply(o)};b(l)},s.getRelativePosition=function(t){var i,e,s=t.originalEvent||t,n=t.currentTarget||t.srcElement,o=n.getBoundingClientRect();return s.touches?(i=s.touches[0].clientX-o.left,e=s.touches[0].clientY-o.top):(i=s.clientX-o.left,e=s.clientY-o.top),{x:i,y:e}},s.addEvent=function(t,i,e){t.addEventListener?t.addEventListener(i,e):t.attachEvent?t.attachEvent("on"+i,e):t["on"+i]=e}),k=s.removeEvent=function(t,i,e){t.removeEventListener?t.removeEventListener(i,e,!1):t.detachEvent?t.detachEvent("on"+i,e):t["on"+i]=c},F=(s.bindEvents=function(t,i,e){t.events||(t.events={}),n(i,function(i){t.events[i]=function(){e.apply(t,arguments)},L(t.chart.canvas,i,t.events[i])})},s.unbindEvents=function(t,i){n(i,function(i,e){k(t.chart.canvas,e,i)})}),R=s.getMaximumWidth=function(t){var i=t.parentNode;return i.clientWidth},T=s.getMaximumHeight=function(t){var i=t.parentNode;return i.clientHeight},A=(s.getMaximumSize=s.getMaximumWidth,s.retinaScale=function(t){var i=t.ctx,e=t.canvas.width,s=t.canvas.height;window.devicePixelRatio&&(i.canvas.style.width=e+"px",i.canvas.style.height=s+"px",i.canvas.height=s*window.devicePixelRatio,i.canvas.width=e*window.devicePixelRatio,i.scale(window.devicePixelRatio,window.devicePixelRatio))}),M=s.clear=function(t){t.ctx.clearRect(0,0,t.width,t.height)},W=s.fontString=function(t,i,e){return i+" "+t+"px "+e},z=s.longestText=function(t,i,e){t.font=i;var s=0;return n(e,function(i){var e=t.measureText(i).width;s=e>s?e:s}),s},B=s.drawRoundedRectangle=function(t,i,e,s,n,o){t.beginPath(),t.moveTo(i+o,e),t.lineTo(i+s-o,e),t.quadraticCurveTo(i+s,e,i+s,e+o),t.lineTo(i+s,e+n-o),t.quadraticCurveTo(i+s,e+n,i+s-o,e+n),t.lineTo(i+o,e+n),t.quadraticCurveTo(i,e+n,i,e+n-o),t.lineTo(i,e+o),t.quadraticCurveTo(i,e,i+o,e),t.closePath()};e.instances={},e.Type=function(t,i,s){this.options=i,this.chart=s,this.id=u(),e.instances[this.id]=this,i.responsive&&this.resize(),this.initialize.call(this,t)},a(e.Type.prototype,{initialize:function(){return this},clear:function(){return M(this.chart),this},stop:function(){return P(this.animationFrame),this},resize:function(t){this.stop();var i=this.chart.canvas,e=R(this.chart.canvas),s=this.options.maintainAspectRatio?e/this.chart.aspectRatio:T(this.chart.canvas);return i.width=this.chart.width=e,i.height=this.chart.height=s,A(this.chart),"function"==typeof t&&t.apply(this,Array.prototype.slice.call(arguments,1)),this},reflow:c,render:function(t){return t&&this.reflow(),this.options.animation&&!t?s.animationLoop(this.draw,this.options.animationSteps,this.options.animationEasing,this.options.onAnimationProgress,this.options.onAnimationComplete,this):(this.draw(),this.options.onAnimationComplete.call(this)),this},generateLegend:function(){return C(this.options.legendTemplate,this)},destroy:function(){this.clear(),F(this,this.events);var t=this.chart.canvas;t.width=this.chart.width,t.height=this.chart.height,t.style.removeProperty?(t.style.removeProperty("width"),t.style.removeProperty("height")):(t.style.removeAttribute("width"),t.style.removeAttribute("height")),delete e.instances[this.id]},showTooltip:function(t,i){"undefined"==typeof this.activeElements&&(this.activeElements=[]);var o=function(t){var i=!1;return t.length!==this.activeElements.length?i=!0:(n(t,function(t,e){t!==this.activeElements[e]&&(i=!0)},this),i)}.call(this,t);if(o||i){if(this.activeElements=t,this.draw(),this.options.customTooltips&&this.options.customTooltips(!1),t.length>0)if(this.datasets&&this.datasets.length>1){for(var a,h,r=this.datasets.length-1;r>=0&&(a=this.datasets[r].points||this.datasets[r].bars||this.datasets[r].segments,h=l(a,t[0]),-1===h);r--);var c=[],u=[],d=function(){var t,i,e,n,o,a=[],l=[],r=[];return s.each(this.datasets,function(i){t=i.points||i.bars||i.segments,t[h]&&t[h].hasValue()&&a.push(t[h])}),s.each(a,function(t){l.push(t.x),r.push(t.y),c.push(s.template(this.options.multiTooltipTemplate,t)),u.push({fill:t._saved.fillColor||t.fillColor,stroke:t._saved.strokeColor||t.strokeColor})},this),o=m(r),e=g(r),n=m(l),i=g(l),{x:n>this.chart.width/2?n:i,y:(o+e)/2}}.call(this,h);new e.MultiTooltip({x:d.x,y:d.y,xPadding:this.options.tooltipXPadding,yPadding:this.options.tooltipYPadding,xOffset:this.options.tooltipXOffset,fillColor:this.options.tooltipFillColor,textColor:this.options.tooltipFontColor,fontFamily:this.options.tooltipFontFamily,fontStyle:this.options.tooltipFontStyle,fontSize:this.options.tooltipFontSize,titleTextColor:this.options.tooltipTitleFontColor,titleFontFamily:this.options.tooltipTitleFontFamily,titleFontStyle:this.options.tooltipTitleFontStyle,titleFontSize:this.options.tooltipTitleFontSize,cornerRadius:this.options.tooltipCornerRadius,labels:c,legendColors:u,legendColorBackground:this.options.multiTooltipKeyBackground,title:t[0].label,chart:this.chart,ctx:this.chart.ctx,custom:this.options.customTooltips}).draw()}else n(t,function(t){var i=t.tooltipPosition();new e.Tooltip({x:Math.round(i.x),y:Math.round(i.y),xPadding:this.options.tooltipXPadding,yPadding:this.options.tooltipYPadding,fillColor:this.options.tooltipFillColor,textColor:this.options.tooltipFontColor,fontFamily:this.options.tooltipFontFamily,fontStyle:this.options.tooltipFontStyle,fontSize:this.options.tooltipFontSize,caretHeight:this.options.tooltipCaretSize,cornerRadius:this.options.tooltipCornerRadius,text:C(this.options.tooltipTemplate,t),chart:this.chart,custom:this.options.customTooltips}).draw()},this);return this}},toBase64Image:function(){return this.chart.canvas.toDataURL.apply(this.chart.canvas,arguments)}}),e.Type.extend=function(t){var i=this,s=function(){return i.apply(this,arguments)};if(s.prototype=o(i.prototype),a(s.prototype,t),s.extend=e.Type.extend,t.name||i.prototype.name){var n=t.name||i.prototype.name,l=e.defaults[i.prototype.name]?o(e.defaults[i.prototype.name]):{};e.defaults[n]=a(l,t.defaults),e.types[n]=s,e.prototype[n]=function(t,i){var o=h(e.defaults.global,e.defaults[n],i||{});return new s(t,o,this)}}else d("Name not provided for this chart, so it hasn't been registered");return i},e.Element=function(t){a(this,t),this.initialize.apply(this,arguments),this.save()},a(e.Element.prototype,{initialize:function(){},restore:function(t){return t?n(t,function(t){this[t]=this._saved[t]},this):a(this,this._saved),this},save:function(){return this._saved=o(this),delete this._saved._saved,this},update:function(t){return n(t,function(t,i){this._saved[i]=this[i],this[i]=t},this),this},transition:function(t,i){return n(t,function(t,e){this[e]=(t-this._saved[e])*i+this._saved[e]},this),this},tooltipPosition:function(){return{x:this.x,y:this.y}},hasValue:function(){return f(this.value)}}),e.Element.extend=r,e.Point=e.Element.extend({display:!0,inRange:function(t,i){var e=this.hitDetectionRadius+this.radius;return Math.pow(t-this.x,2)+Math.pow(i-this.y,2)<Math.pow(e,2)},draw:function(){if(this.display){var t=this.ctx;t.beginPath(),t.arc(this.x,this.y,this.radius,0,2*Math.PI),t.closePath(),t.strokeStyle=this.strokeColor,t.lineWidth=this.strokeWidth,t.fillStyle=this.fillColor,t.fill(),t.stroke()}}}),e.Arc=e.Element.extend({inRange:function(t,i){var e=s.getAngleFromPoint(this,{x:t,y:i}),n=e.angle>=this.startAngle&&e.angle<=this.endAngle,o=e.distance>=this.innerRadius&&e.distance<=this.outerRadius;return n&&o},tooltipPosition:function(){var t=this.startAngle+(this.endAngle-this.startAngle)/2,i=(this.outerRadius-this.innerRadius)/2+this.innerRadius;return{x:this.x+Math.cos(t)*i,y:this.y+Math.sin(t)*i}},draw:function(t){var i=this.ctx;i.beginPath(),i.arc(this.x,this.y,this.outerRadius,this.startAngle,this.endAngle),i.arc(this.x,this.y,this.innerRadius,this.endAngle,this.startAngle,!0),i.closePath(),i.strokeStyle=this.strokeColor,i.lineWidth=this.strokeWidth,i.fillStyle=this.fillColor,i.fill(),i.lineJoin="bevel",this.showStroke&&i.stroke()}}),e.Rectangle=e.Element.extend({draw:function(){var t=this.ctx,i=this.width/2,e=this.x-i,s=this.x+i,n=this.base-(this.base-this.y),o=this.strokeWidth/2;this.showStroke&&(e+=o,s-=o,n+=o),t.beginPath(),t.fillStyle=this.fillColor,t.strokeStyle=this.strokeColor,t.lineWidth=this.strokeWidth,t.moveTo(e,this.base),t.lineTo(e,n),t.lineTo(s,n),t.lineTo(s,this.base),t.fill(),this.showStroke&&t.stroke()},height:function(){return this.base-this.y},inRange:function(t,i){return t>=this.x-this.width/2&&t<=this.x+this.width/2&&i>=this.y&&i<=this.base}}),e.Tooltip=e.Element.extend({draw:function(){var t=this.chart.ctx;t.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.xAlign="center",this.yAlign="above";var i=this.caretPadding=2,e=t.measureText(this.text).width+2*this.xPadding,s=this.fontSize+2*this.yPadding,n=s+this.caretHeight+i;this.x+e/2>this.chart.width?this.xAlign="left":this.x-e/2<0&&(this.xAlign="right"),this.y-n<0&&(this.yAlign="below");var o=this.x-e/2,a=this.y-n;if(t.fillStyle=this.fillColor,this.custom)this.custom(this);else{switch(this.yAlign){case"above":t.beginPath(),t.moveTo(this.x,this.y-i),t.lineTo(this.x+this.caretHeight,this.y-(i+this.caretHeight)),t.lineTo(this.x-this.caretHeight,this.y-(i+this.caretHeight)),t.closePath(),t.fill();break;case"below":a=this.y+i+this.caretHeight,t.beginPath(),t.moveTo(this.x,this.y+i),t.lineTo(this.x+this.caretHeight,this.y+i+this.caretHeight),t.lineTo(this.x-this.caretHeight,this.y+i+this.caretHeight),t.closePath(),t.fill()}switch(this.xAlign){case"left":o=this.x-e+(this.cornerRadius+this.caretHeight);break;case"right":o=this.x-(this.cornerRadius+this.caretHeight)}B(t,o,a,e,s,this.cornerRadius),t.fill(),t.fillStyle=this.textColor,t.textAlign="center",t.textBaseline="middle",t.fillText(this.text,o+e/2,a+s/2)}}}),e.MultiTooltip=e.Element.extend({initialize:function(){this.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.titleFont=W(this.titleFontSize,this.titleFontStyle,this.titleFontFamily),this.height=this.labels.length*this.fontSize+(this.labels.length-1)*(this.fontSize/2)+2*this.yPadding+1.5*this.titleFontSize,this.ctx.font=this.titleFont;var t=this.ctx.measureText(this.title).width,i=z(this.ctx,this.font,this.labels)+this.fontSize+3,e=g([i,t]);this.width=e+2*this.xPadding;var s=this.height/2;this.y-s<0?this.y=s:this.y+s>this.chart.height&&(this.y=this.chart.height-s),this.x>this.chart.width/2?this.x-=this.xOffset+this.width:this.x+=this.xOffset},getLineHeight:function(t){var i=this.y-this.height/2+this.yPadding,e=t-1;return 0===t?i+this.titleFontSize/2:i+(1.5*this.fontSize*e+this.fontSize/2)+1.5*this.titleFontSize},draw:function(){if(this.custom)this.custom(this);else{B(this.ctx,this.x,this.y-this.height/2,this.width,this.height,this.cornerRadius);var t=this.ctx;t.fillStyle=this.fillColor,t.fill(),t.closePath(),t.textAlign="left",t.textBaseline="middle",t.fillStyle=this.titleTextColor,t.font=this.titleFont,t.fillText(this.title,this.x+this.xPadding,this.getLineHeight(0)),t.font=this.font,s.each(this.labels,function(i,e){t.fillStyle=this.textColor,t.fillText(i,this.x+this.xPadding+this.fontSize+3,this.getLineHeight(e+1)),t.fillStyle=this.legendColorBackground,t.fillRect(this.x+this.xPadding,this.getLineHeight(e+1)-this.fontSize/2,this.fontSize,this.fontSize),t.fillStyle=this.legendColors[e].fill,t.fillRect(this.x+this.xPadding,this.getLineHeight(e+1)-this.fontSize/2,this.fontSize,this.fontSize)},this)}}}),e.Scale=e.Element.extend({initialize:function(){this.fit()},buildYLabels:function(){this.yLabels=[];for(var t=v(this.stepValue),i=0;i<=this.steps;i++)this.yLabels.push(C(this.templateString,{value:(this.min+i*this.stepValue).toFixed(t)}));this.yLabelWidth=this.display&&this.showLabels?z(this.ctx,this.font,this.yLabels):0},addXLabel:function(t){this.xLabels.push(t),this.valuesCount++,this.fit()},removeXLabel:function(){this.xLabels.shift(),this.valuesCount--,this.fit()},fit:function(){this.startPoint=this.display?this.fontSize:0,this.endPoint=this.display?this.height-1.5*this.fontSize-5:this.height,this.startPoint+=this.padding,this.endPoint-=this.padding;var t,i=this.endPoint-this.startPoint;for(this.calculateYRange(i),this.buildYLabels(),this.calculateXLabelRotation();i>this.endPoint-this.startPoint;)i=this.endPoint-this.startPoint,t=this.yLabelWidth,this.calculateYRange(i),this.buildYLabels(),t<this.yLabelWidth&&this.calculateXLabelRotation()},calculateXLabelRotation:function(){this.ctx.font=this.font;var t,i,e=this.ctx.measureText(this.xLabels[0]).width,s=this.ctx.measureText(this.xLabels[this.xLabels.length-1]).width;if(this.xScalePaddingRight=s/2+3,this.xScalePaddingLeft=e/2>this.yLabelWidth+10?e/2:this.yLabelWidth+10,this.xLabelRotation=0,this.display){var n,o=z(this.ctx,this.font,this.xLabels);this.xLabelWidth=o;for(var a=Math.floor(this.calculateX(1)-this.calculateX(0))-6;this.xLabelWidth>a&&0===this.xLabelRotation||this.xLabelWidth>a&&this.xLabelRotation<=90&&this.xLabelRotation>0;)n=Math.cos(S(this.xLabelRotation)),t=n*e,i=n*s,t+this.fontSize/2>this.yLabelWidth+8&&(this.xScalePaddingLeft=t+this.fontSize/2),this.xScalePaddingRight=this.fontSize/2,this.xLabelRotation++,this.xLabelWidth=n*o;this.xLabelRotation>0&&(this.endPoint-=Math.sin(S(this.xLabelRotation))*o+3)}else this.xLabelWidth=0,this.xScalePaddingRight=this.padding,this.xScalePaddingLeft=this.padding},calculateYRange:c,drawingArea:function(){return this.startPoint-this.endPoint},calculateY:function(t){var i=this.drawingArea()/(this.min-this.max);return this.endPoint-i*(t-this.min)},calculateX:function(t){var i=(this.xLabelRotation>0,this.width-(this.xScalePaddingLeft+this.xScalePaddingRight)),e=i/Math.max(this.valuesCount-(this.offsetGridLines?0:1),1),s=e*t+this.xScalePaddingLeft;return this.offsetGridLines&&(s+=e/2),Math.round(s)},update:function(t){s.extend(this,t),this.fit()},draw:function(){var t=this.ctx,i=(this.endPoint-this.startPoint)/this.steps,e=Math.round(this.xScalePaddingLeft);this.display&&(t.fillStyle=this.textColor,t.font=this.font,n(this.yLabels,function(n,o){var a=this.endPoint-i*o,h=Math.round(a),l=this.showHorizontalLines;t.textAlign="right",t.textBaseline="middle",this.showLabels&&t.fillText(n,e-10,a),0!==o||l||(l=!0),l&&t.beginPath(),o>0?(t.lineWidth=this.gridLineWidth,t.strokeStyle=this.gridLineColor):(t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor),h+=s.aliasPixel(t.lineWidth),l&&(t.moveTo(e,h),t.lineTo(this.width,h),t.stroke(),t.closePath()),t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor,t.beginPath(),t.moveTo(e-5,h),t.lineTo(e,h),t.stroke(),t.closePath()},this),n(this.xLabels,function(i,e){var s=this.calculateX(e)+x(this.lineWidth),n=this.calculateX(e-(this.offsetGridLines?.5:0))+x(this.lineWidth),o=this.xLabelRotation>0,a=this.showVerticalLines;0!==e||a||(a=!0),a&&t.beginPath(),e>0?(t.lineWidth=this.gridLineWidth,t.strokeStyle=this.gridLineColor):(t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor),a&&(t.moveTo(n,this.endPoint),t.lineTo(n,this.startPoint-3),t.stroke(),t.closePath()),t.lineWidth=this.lineWidth,t.strokeStyle=this.lineColor,t.beginPath(),t.moveTo(n,this.endPoint),t.lineTo(n,this.endPoint+5),t.stroke(),t.closePath(),t.save(),t.translate(s,o?this.endPoint+12:this.endPoint+8),t.rotate(-1*S(this.xLabelRotation)),t.font=this.font,t.textAlign=o?"right":"center",t.textBaseline=o?"middle":"top",t.fillText(i,0,0),t.restore()},this))}}),e.RadialScale=e.Element.extend({initialize:function(){this.size=m([this.height,this.width]),this.drawingArea=this.display?this.size/2-(this.fontSize/2+this.backdropPaddingY):this.size/2},calculateCenterOffset:function(t){var i=this.drawingArea/(this.max-this.min);return(t-this.min)*i},update:function(){this.lineArc?this.drawingArea=this.display?this.size/2-(this.fontSize/2+this.backdropPaddingY):this.size/2:this.setScaleSize(),this.buildYLabels()},buildYLabels:function(){this.yLabels=[];for(var t=v(this.stepValue),i=0;i<=this.steps;i++)this.yLabels.push(C(this.templateString,{value:(this.min+i*this.stepValue).toFixed(t)}))},getCircumference:function(){return 2*Math.PI/this.valuesCount},setScaleSize:function(){var t,i,e,s,n,o,a,h,l,r,c,u,d=m([this.height/2-this.pointLabelFontSize-5,this.width/2]),p=this.width,g=0;for(this.ctx.font=W(this.pointLabelFontSize,this.pointLabelFontStyle,this.pointLabelFontFamily),i=0;i<this.valuesCount;i++)t=this.getPointPosition(i,d),e=this.ctx.measureText(C(this.templateString,{value:this.labels[i]})).width+5,0===i||i===this.valuesCount/2?(s=e/2,t.x+s>p&&(p=t.x+s,n=i),t.x-s<g&&(g=t.x-s,a=i)):i<this.valuesCount/2?t.x+e>p&&(p=t.x+e,n=i):i>this.valuesCount/2&&t.x-e<g&&(g=t.x-e,a=i);l=g,r=Math.ceil(p-this.width),o=this.getIndexAngle(n),h=this.getIndexAngle(a),c=r/Math.sin(o+Math.PI/2),u=l/Math.sin(h+Math.PI/2),c=f(c)?c:0,u=f(u)?u:0,this.drawingArea=d-(u+c)/2,this.setCenterPoint(u,c)},setCenterPoint:function(t,i){var e=this.width-i-this.drawingArea,s=t+this.drawingArea;this.xCenter=(s+e)/2,this.yCenter=this.height/2},getIndexAngle:function(t){var i=2*Math.PI/this.valuesCount;return t*i-Math.PI/2},getPointPosition:function(t,i){var e=this.getIndexAngle(t);return{x:Math.cos(e)*i+this.xCenter,y:Math.sin(e)*i+this.yCenter}},draw:function(){if(this.display){var t=this.ctx;if(n(this.yLabels,function(i,e){if(e>0){var s,n=e*(this.drawingArea/this.steps),o=this.yCenter-n;if(this.lineWidth>0)if(t.strokeStyle=this.lineColor,t.lineWidth=this.lineWidth,this.lineArc)t.beginPath(),t.arc(this.xCenter,this.yCenter,n,0,2*Math.PI),t.closePath(),t.stroke();else{t.beginPath();for(var a=0;a<this.valuesCount;a++)s=this.getPointPosition(a,this.calculateCenterOffset(this.min+e*this.stepValue)),0===a?t.moveTo(s.x,s.y):t.lineTo(s.x,s.y);t.closePath(),t.stroke()}if(this.showLabels){if(t.font=W(this.fontSize,this.fontStyle,this.fontFamily),this.showLabelBackdrop){var h=t.measureText(i).width;t.fillStyle=this.backdropColor,t.fillRect(this.xCenter-h/2-this.backdropPaddingX,o-this.fontSize/2-this.backdropPaddingY,h+2*this.backdropPaddingX,this.fontSize+2*this.backdropPaddingY)}t.textAlign="center",t.textBaseline="middle",t.fillStyle=this.fontColor,t.fillText(i,this.xCenter,o)}}},this),!this.lineArc){t.lineWidth=this.angleLineWidth,t.strokeStyle=this.angleLineColor;for(var i=this.valuesCount-1;i>=0;i--){if(this.angleLineWidth>0){var e=this.getPointPosition(i,this.calculateCenterOffset(this.max));t.beginPath(),t.moveTo(this.xCenter,this.yCenter),t.lineTo(e.x,e.y),t.stroke(),t.closePath()}var s=this.getPointPosition(i,this.calculateCenterOffset(this.max)+5);t.font=W(this.pointLabelFontSize,this.pointLabelFontStyle,this.pointLabelFontFamily),t.fillStyle=this.pointLabelFontColor;var o=this.labels.length,a=this.labels.length/2,h=a/2,l=h>i||i>o-h,r=i===h||i===o-h;t.textAlign=0===i?"center":i===a?"center":a>i?"left":"right",t.textBaseline=r?"middle":l?"bottom":"top",t.fillText(this.labels[i],s.x,s.y)}}}}}),s.addEvent(window,"resize",function(){var t;return function(){clearTimeout(t),t=setTimeout(function(){n(e.instances,function(t){t.options.responsive&&t.resize(t.render,!0)})},50)}}()),p?define(function(){return e}):"object"==typeof module&&module.exports&&(module.exports=e),t.Chart=e,e.noConflict=function(){return t.Chart=i,e}}).call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleBeginAtZero:!0,scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,barShowStroke:!0,barStrokeWidth:2,barValueSpacing:5,barDatasetSpacing:1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Bar",defaults:s,initialize:function(t){var s=this.options;this.ScaleClass=i.Scale.extend({offsetGridLines:!0,calculateBarX:function(t,i,e){var n=this.calculateBaseWidth(),o=this.calculateX(e)-n/2,a=this.calculateBarWidth(t);return o+a*i+i*s.barDatasetSpacing+a/2},calculateBaseWidth:function(){return this.calculateX(1)-this.calculateX(0)-2*s.barValueSpacing},calculateBarWidth:function(t){var i=this.calculateBaseWidth()-(t-1)*s.barDatasetSpacing;return i/t}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getBarsAtEvent(t):[];this.eachBars(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),this.BarClass=i.Rectangle.extend({strokeWidth:this.options.barStrokeWidth,showStroke:this.options.barShowStroke,ctx:this.chart.ctx}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,bars:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.bars.push(new this.BarClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.strokeColor,fillColor:i.fillColor,highlightFill:i.highlightFill||i.fillColor,highlightStroke:i.highlightStroke||i.strokeColor}))},this)},this),this.buildScale(t.labels),this.BarClass.prototype.base=this.scale.endPoint,this.eachBars(function(t,i,s){e.extend(t,{width:this.scale.calculateBarWidth(this.datasets.length),x:this.scale.calculateBarX(this.datasets.length,s,i),y:this.scale.endPoint}),t.save()},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachBars(function(t){t.save()}),this.render()},eachBars:function(t){e.each(this.datasets,function(i,s){e.each(i.bars,t,this,s)},this)},getBarsAtEvent:function(t){for(var i,s=[],n=e.getRelativePosition(t),o=function(t){s.push(t.bars[i])},a=0;a<this.datasets.length;a++)for(i=0;i<this.datasets[a].bars.length;i++)if(this.datasets[a].bars[i].inRange(n.x,n.y))return e.each(this.datasets,o),s;return s},buildScale:function(t){var i=this,s=function(){var t=[];return i.eachBars(function(i){t.push(i.value)}),t},n={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(s(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.barShowStroke?this.options.barStrokeWidth:0,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(n,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new this.ScaleClass(n)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].bars.push(new this.BarClass({value:t,label:i,x:this.scale.calculateBarX(this.datasets.length,e,this.scale.valuesCount+1),y:this.scale.endPoint,width:this.scale.calculateBarWidth(this.datasets.length),base:this.scale.endPoint,strokeColor:this.datasets[e].strokeColor,fillColor:this.datasets[e].fillColor}))
+},this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.bars.shift()},this),this.update()},reflow:function(){e.extend(this.BarClass.prototype,{y:this.scale.endPoint,base:this.scale.endPoint});var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();this.chart.ctx;this.scale.draw(i),e.each(this.datasets,function(t,s){e.each(t.bars,function(t,e){t.hasValue()&&(t.base=this.scale.endPoint,t.transition({x:this.scale.calculateBarX(this.datasets.length,s,e),y:this.scale.calculateY(t.value),width:this.scale.calculateBarWidth(this.datasets.length)},i).draw())},this)},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,percentageInnerCutout:50,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Doughnut",defaults:s,initialize:function(t){this.segments=[],this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,this.SegmentArc=i.Arc.extend({ctx:this.chart.ctx,x:this.chart.width/2,y:this.chart.height/2}),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.calculateTotal(t),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({value:t.value,outerRadius:this.options.animateScale?0:this.outerRadius,innerRadius:this.options.animateScale?0:this.outerRadius/100*this.options.percentageInnerCutout,fillColor:t.color,highlightColor:t.highlight||t.color,showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,startAngle:1.5*Math.PI,circumference:this.options.animateRotate?0:this.calculateCircumference(t.value),label:t.label})),e||(this.reflow(),this.update())},calculateCircumference:function(t){return 2*Math.PI*(Math.abs(t)/this.total)},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=Math.abs(t.value)},this)},update:function(){this.calculateTotal(this.segments),e.each(this.activeElements,function(t){t.restore(["fillColor"])}),e.each(this.segments,function(t){t.save()}),this.render()},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,e.each(this.segments,function(t){t.update({outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout})},this)},draw:function(t){var i=t?t:1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.calculateCircumference(t.value),outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout},i),t.endAngle=t.startAngle+t.circumference,t.draw(),0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle)},this)}}),i.types.Doughnut.extend({name:"Pie",defaults:e.merge(s,{percentageInnerCutout:0})})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,bezierCurve:!0,bezierCurveTension:.4,pointDot:!0,pointDotRadius:4,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Line",defaults:s,initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx,inRange:function(t){return Math.pow(t-this.x,2)<Math.pow(this.radius+this.hitDetectionRadius,2)}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this),this.buildScale(t.labels),this.eachPoints(function(t,i){e.extend(t,{x:this.scale.calculateX(i),y:this.scale.endPoint}),t.save()},this)},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachPoints(function(t){t.save()}),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.datasets,function(t){e.each(t.points,function(t){t.inRange(s.x,s.y)&&i.push(t)})},this),i},buildScale:function(t){var s=this,n=function(){var t=[];return s.eachPoints(function(i){t.push(i.value)}),t},o={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(n(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.pointDotRadius+this.options.pointDotStrokeWidth,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(o,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new i.Scale(o)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:this.scale.calculateX(this.scale.valuesCount+1),y:this.scale.endPoint,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.points.shift()},this),this.update()},reflow:function(){var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();var s=this.chart.ctx,n=function(t){return null!==t.value},o=function(t,i,s){return e.findNextWhere(i,n,s)||t},a=function(t,i,s){return e.findPreviousWhere(i,n,s)||t};this.scale.draw(i),e.each(this.datasets,function(t){var h=e.where(t.points,n);e.each(t.points,function(t,e){t.hasValue()&&t.transition({y:this.scale.calculateY(t.value),x:this.scale.calculateX(e)},i)},this),this.options.bezierCurve&&e.each(h,function(t,i){var s=i>0&&i<h.length-1?this.options.bezierCurveTension:0;t.controlPoints=e.splineCurve(a(t,h,i),t,o(t,h,i),s),t.controlPoints.outer.y>this.scale.endPoint?t.controlPoints.outer.y=this.scale.endPoint:t.controlPoints.outer.y<this.scale.startPoint&&(t.controlPoints.outer.y=this.scale.startPoint),t.controlPoints.inner.y>this.scale.endPoint?t.controlPoints.inner.y=this.scale.endPoint:t.controlPoints.inner.y<this.scale.startPoint&&(t.controlPoints.inner.y=this.scale.startPoint)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(h,function(t,i){if(0===i)s.moveTo(t.x,t.y);else if(this.options.bezierCurve){var e=a(t,h,i);s.bezierCurveTo(e.controlPoints.outer.x,e.controlPoints.outer.y,t.controlPoints.inner.x,t.controlPoints.inner.y,t.x,t.y)}else s.lineTo(t.x,t.y)},this),s.stroke(),this.options.datasetFill&&h.length>0&&(s.lineTo(h[h.length-1].x,this.scale.endPoint),s.lineTo(h[0].x,this.scale.endPoint),s.fillStyle=t.fillColor,s.closePath(),s.fill()),e.each(h,function(t){t.draw()})},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowLabelBackdrop:!0,scaleBackdropColor:"rgba(255,255,255,0.75)",scaleBeginAtZero:!0,scaleBackdropPaddingY:2,scaleBackdropPaddingX:2,scaleShowLine:!0,segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"PolarArea",defaults:s,initialize:function(t){this.segments=[],this.SegmentArc=i.Arc.extend({showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,ctx:this.chart.ctx,innerRadius:0,x:this.chart.width/2,y:this.chart.height/2}),this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,lineArc:!0,width:this.chart.width,height:this.chart.height,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,valuesCount:t.length}),this.updateScaleRange(t),this.scale.update(),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({fillColor:t.color,highlightColor:t.highlight||t.color,label:t.label,value:t.value,outerRadius:this.options.animateScale?0:this.scale.calculateCenterOffset(t.value),circumference:this.options.animateRotate?0:this.scale.getCircumference(),startAngle:1.5*Math.PI})),e||(this.reflow(),this.update())},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=t.value},this),this.scale.valuesCount=this.segments.length},updateScaleRange:function(t){var i=[];e.each(t,function(t){i.push(t.value)});var s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s,{size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2})},update:function(){this.calculateTotal(this.segments),e.each(this.segments,function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.updateScaleRange(this.segments),this.scale.update(),e.extend(this.scale,{xCenter:this.chart.width/2,yCenter:this.chart.height/2}),e.each(this.segments,function(t){t.update({outerRadius:this.scale.calculateCenterOffset(t.value)})},this)},draw:function(t){var i=t||1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.scale.getCircumference(),outerRadius:this.scale.calculateCenterOffset(t.value)},i),t.endAngle=t.startAngle+t.circumference,0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle),t.draw()},this),this.scale.draw()}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers;i.Type.extend({name:"Radar",defaults:{scaleShowLine:!0,angleShowLineOut:!0,scaleShowLabels:!1,scaleBeginAtZero:!0,angleLineColor:"rgba(0,0,0,.1)",angleLineWidth:1,pointLabelFontFamily:"'Arial'",pointLabelFontStyle:"normal",pointLabelFontSize:10,pointLabelFontColor:"#666",pointDot:!0,pointDotRadius:3,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'},initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx}),this.datasets=[],this.buildScale(t),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){var o;this.scale.animation||(o=this.scale.getPointPosition(n,this.scale.calculateCenterOffset(e))),s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,x:this.options.animation?this.scale.xCenter:o.x,y:this.options.animation?this.scale.yCenter:o.y,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this)},this),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=e.getRelativePosition(t),s=e.getAngleFromPoint({x:this.scale.xCenter,y:this.scale.yCenter},i),n=2*Math.PI/this.scale.valuesCount,o=Math.round((s.angle-1.5*Math.PI)/n),a=[];return(o>=this.scale.valuesCount||0>o)&&(o=0),s.distance<=this.scale.drawingArea&&e.each(this.datasets,function(t){a.push(t.points[o])}),a},buildScale:function(t){this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,angleLineColor:this.options.angleLineColor,angleLineWidth:this.options.angleShowLineOut?this.options.angleLineWidth:0,pointLabelFontColor:this.options.pointLabelFontColor,pointLabelFontSize:this.options.pointLabelFontSize,pointLabelFontFamily:this.options.pointLabelFontFamily,pointLabelFontStyle:this.options.pointLabelFontStyle,height:this.chart.height,width:this.chart.width,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,labels:t.labels,valuesCount:t.datasets[0].data.length}),this.scale.setScaleSize(),this.updateScaleRange(t.datasets),this.scale.buildYLabels()},updateScaleRange:function(t){var i=function(){var i=[];return e.each(t,function(t){t.data?i=i.concat(t.data):e.each(t.points,function(t){i.push(t.value)})}),i}(),s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s)},addData:function(t,i){this.scale.valuesCount++,e.each(t,function(t,e){var s=this.scale.getPointPosition(this.scale.valuesCount,this.scale.calculateCenterOffset(t));this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:s.x,y:s.y,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.labels.push(i),this.reflow(),this.update()},removeData:function(){this.scale.valuesCount--,this.scale.labels.shift(),e.each(this.datasets,function(t){t.points.shift()},this),this.reflow(),this.update()},update:function(){this.eachPoints(function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.scale,{width:this.chart.width,height:this.chart.height,size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2}),this.updateScaleRange(this.datasets),this.scale.setScaleSize(),this.scale.buildYLabels()},draw:function(t){var i=t||1,s=this.chart.ctx;this.clear(),this.scale.draw(),e.each(this.datasets,function(t){e.each(t.points,function(t,e){t.hasValue()&&t.transition(this.scale.getPointPosition(e,this.scale.calculateCenterOffset(t.value)),i)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(t.points,function(t,i){0===i?s.moveTo(t.x,t.y):s.lineTo(t.x,t.y)},this),s.closePath(),s.stroke(),s.fillStyle=t.fillColor,s.fill(),e.each(t.points,function(t){t.hasValue()&&t.draw()})},this)}})}.call(this);;
 (function()
 {
- var Global=this,Runtime=this.IntelliFactory.Runtime,jQuery,UI,Next,Doc,mdw,Roll,Client,List,T;
+ var Global=this,Runtime=this.IntelliFactory.Runtime,List,UI,Next,Doc,Arrays,String,AttrProxy,T,Random,Charting,Pervasives,Color,Chart,Renderers,ChartJs,FinantialMathematics,Web,ChartingUtil,jQuery,Client,Concurrency,Data,WBRuntime,WorldBankRuntime,Seq,Collections,ResizeArray,ResizeArrayProxy,JavaScript,JSModule,AttrModule,Utilities;
  Runtime.Define(Global,{
-  mdw:{
-   Roll:{
+  FinantialMathematics:{
+   Web:{
+    ChartingUtil:{
+     chartDiv:function(title,chart,legend)
+     {
+      var arg20,arg201;
+      arg201=List.ofArray([Doc.TextNode(title)]);
+      arg20=List.ofArray([Doc.Element("h2",[],arg201),Doc.Async(chart),legend(null)]);
+      return Doc.Element("div",[],arg20);
+     },
+     defaultChartConfig:function()
+     {
+      return{
+       pointDot:false,
+       bezierCurve:true,
+       datasetFill:false
+      };
+     },
+     legend:function(countries,colors)
+     {
+      var x,mapping,x1;
+      x=Arrays.zip(colors,countries);
+      mapping=function(tupledArg)
+      {
+       var color,countryName,arg20,arg00,arg201;
+       color=tupledArg[0];
+       countryName=tupledArg[1];
+       arg00="width:20px;height:20px;margin-right:10px;display:inline-block;background-color:"+String(color);
+       arg201=List.ofArray([Doc.TextNode(countryName)]);
+       arg20=List.ofArray([Doc.Element("span",List.ofArray([AttrProxy.Create("style",arg00)]),Runtime.New(T,{
+        $:0
+       })),Doc.Element("span",[],arg201)]);
+       return Doc.Element("div",[],arg20);
+      };
+      x1=Arrays.map(mapping,x);
+      return Doc.Element("div",[],x1);
+     },
+     randomColor:Runtime.Field(function()
+     {
+      var r;
+      r=Random.New();
+      return function()
+      {
+       return Runtime.New(Color,{
+        $:0,
+        $0:r.Next1(256),
+        $1:r.Next1(256),
+        $2:r.Next1(256),
+        $3:1
+       });
+      };
+     }),
+     renderChartLines:function(data,colors)
+     {
+      var mapping,array,arg00,x;
+      mapping=function(tupledArg)
+      {
+       var c,e;
+       c=tupledArg[0];
+       e=tupledArg[1];
+       return Chart.Line(e).__WithPointStrokeColor(c).__WithStrokeColor(c);
+      };
+      array=Arrays.zip(colors,data);
+      arg00=Arrays.map(mapping,array);
+      x=Chart.Combine(arg00);
+      return ChartJs.Render2(x,{
+       $:1,
+       $0:{
+        $:0,
+        $0:600,
+        $1:400
+       }
+      },{
+       $:1,
+       $0:ChartingUtil.defaultChartConfig()
+      },{
+       $:0
+      });
+     }
+    },
     Client:{
      Main:Runtime.Field(function()
      {
       jQuery("#main").empty();
-      return Doc.RunById("main",Client.renderRolls());
+      return Doc.RunById("main",Doc.Concat(List.ofArray([Client["chartDiv'"]("Broad money growth (annual %)",Client.chart0()),Client["chartDiv'"]("5-bank asset concentration",Client.chart1())])));
      }),
-     renderRolls:Runtime.Field(function()
+     chart0:function()
      {
-      var arg20,arg10,arg201;
-      arg10=Runtime.New(T,{
-       $:0
+      return Concurrency.Delay(function()
+      {
+       var mapping,source,arg00;
+       mapping=function(c)
+       {
+        var _this;
+        _this=WorldBankRuntime.GetIndicators(c);
+        return WorldBankRuntime.AsyncGetIndicator(_this,"FM.LBL.BMNY.ZG");
+       };
+       source=Client.countries();
+       arg00=Seq.map(mapping,source);
+       return Concurrency.Bind(Concurrency.Parallel(arg00),function(_arg1)
+       {
+        return Concurrency.Return(Client.renderChartLinesYears(_arg1));
+       });
       });
-      arg201=List.ofArray([Doc.TextNode("Recent rolls:")]);
-      arg20=List.ofArray([Doc.Element("h1",arg10,arg201)]);
-      return Doc.Element("div",[],arg20);
-     })
+     },
+     chart1:function()
+     {
+      return Concurrency.Delay(function()
+      {
+       var mapping,source,arg00;
+       mapping=function(c)
+       {
+        var _this;
+        _this=WorldBankRuntime.GetIndicators(c);
+        return WorldBankRuntime.AsyncGetIndicator(_this,"GFDD.OI.06");
+       };
+       source=Client.countries();
+       arg00=Seq.map(mapping,source);
+       return Concurrency.Bind(Concurrency.Parallel(arg00),function(_arg1)
+       {
+        return Concurrency.Return(Client.renderChartLinesYears(_arg1));
+       });
+      });
+     },
+     "chartDiv'":function(title,chart)
+     {
+      return ChartingUtil.chartDiv(title,chart,function()
+      {
+       return Client["legent'"]();
+      });
+     },
+     colors:Runtime.Field(function()
+     {
+      return Arrays.map(function()
+      {
+       return(ChartingUtil.randomColor())(null);
+      },Client.countries());
+     }),
+     countries:Runtime.Field(function()
+     {
+      var _this,_this1,_this2,_this3,_this4,_this5;
+      _this=Client.data();
+      _this1=Client.data();
+      _this2=Client.data();
+      _this3=Client.data();
+      _this4=Client.data();
+      _this5=Client.data();
+      return[WorldBankRuntime.GetCountry(_this,"AUT","Austria"),WorldBankRuntime.GetCountry(_this1,"HUN","Hungary"),WorldBankRuntime.GetCountry(_this2,"GBR","United Kingdom"),WorldBankRuntime.GetCountry(_this3,"POL","Poland"),WorldBankRuntime.GetCountry(_this4,"ARE","United Arab Emirates"),WorldBankRuntime.GetCountry(_this5,"USA","United States")];
+     }),
+     data:Runtime.Field(function()
+     {
+      return{
+       serviceUrl:"http://api.worldbank.org",
+       source:"World Development Indicators;Global Financial Development"
+      };
+     }),
+     "legent'":function()
+     {
+      var mapping,array,countries,colors;
+      mapping=function(c)
+      {
+       return c.Name;
+      };
+      array=Client.countries();
+      countries=Arrays.map(mapping,array);
+      colors=Client.colors();
+      return ChartingUtil.legend(countries,colors);
+     },
+     plotDataYears:function(i)
+     {
+      return Seq.zip(Seq.map(function(value)
+      {
+       return Global.String(value);
+      },ResizeArrayProxy.New(Seq.sort(Seq.map(function(value)
+      {
+       return value<<0;
+      },JSModule.GetFieldNames(i))))),ResizeArrayProxy.New(Seq.map(function(x)
+      {
+       return x[1];
+      },Seq.sortBy(function(tupledArg)
+      {
+       return tupledArg[0]<<0;
+      },JSModule.GetFields(i)))));
+     },
+     "renderChartLines'":function(data)
+     {
+      var colors;
+      colors=Client.colors();
+      return ChartingUtil.renderChartLines(data,colors);
+     },
+     renderChartLinesYears:function(data)
+     {
+      var mapping,data1;
+      mapping=function(i)
+      {
+       return Client.plotDataYears(i);
+      };
+      data1=Arrays.map(mapping,data);
+      return Client["renderChartLines'"](data1);
+     }
+    }
+   }
+  },
+  WebSharper:{
+   UI:{
+    Next:{
+     Utilities:{
+      cls:function(n)
+      {
+       return AttrModule.Class(n);
+      },
+      divc:function(c,docs)
+      {
+       var arg10;
+       arg10=List.ofArray([Utilities.cls(c)]);
+       return Doc.Element("div",arg10,docs);
+      },
+      href:function(txt,url)
+      {
+       var arg10,arg20;
+       arg10=List.ofArray([AttrProxy.Create("href",url)]);
+       arg20=List.ofArray([Doc.TextNode(txt)]);
+       return Doc.Element("a",arg10,arg20);
+      },
+      sty:function(n,v)
+      {
+       return AttrModule.Style(n,v);
+      }
+     }
     }
    }
   }
  });
  Runtime.OnInit(function()
  {
-  jQuery=Runtime.Safe(Global.jQuery);
+  List=Runtime.Safe(Global.WebSharper.List);
   UI=Runtime.Safe(Global.WebSharper.UI);
   Next=Runtime.Safe(UI.Next);
   Doc=Runtime.Safe(Next.Doc);
-  mdw=Runtime.Safe(Global.mdw);
-  Roll=Runtime.Safe(mdw.Roll);
-  Client=Runtime.Safe(Roll.Client);
-  List=Runtime.Safe(Global.WebSharper.List);
-  return T=Runtime.Safe(List.T);
+  Arrays=Runtime.Safe(Global.WebSharper.Arrays);
+  String=Runtime.Safe(Global.String);
+  AttrProxy=Runtime.Safe(Next.AttrProxy);
+  T=Runtime.Safe(List.T);
+  Random=Runtime.Safe(Global.WebSharper.Random);
+  Charting=Runtime.Safe(Global.WebSharper.Charting);
+  Pervasives=Runtime.Safe(Charting.Pervasives);
+  Color=Runtime.Safe(Pervasives.Color);
+  Chart=Runtime.Safe(Charting.Chart);
+  Renderers=Runtime.Safe(Charting.Renderers);
+  ChartJs=Runtime.Safe(Renderers.ChartJs);
+  FinantialMathematics=Runtime.Safe(Global.FinantialMathematics);
+  Web=Runtime.Safe(FinantialMathematics.Web);
+  ChartingUtil=Runtime.Safe(Web.ChartingUtil);
+  jQuery=Runtime.Safe(Global.jQuery);
+  Client=Runtime.Safe(Web.Client);
+  Concurrency=Runtime.Safe(Global.WebSharper.Concurrency);
+  Data=Runtime.Safe(Global.WebSharper.Data);
+  WBRuntime=Runtime.Safe(Data.WBRuntime);
+  WorldBankRuntime=Runtime.Safe(WBRuntime.WorldBankRuntime);
+  Seq=Runtime.Safe(Global.WebSharper.Seq);
+  Collections=Runtime.Safe(Global.WebSharper.Collections);
+  ResizeArray=Runtime.Safe(Collections.ResizeArray);
+  ResizeArrayProxy=Runtime.Safe(ResizeArray.ResizeArrayProxy);
+  JavaScript=Runtime.Safe(Global.WebSharper.JavaScript);
+  JSModule=Runtime.Safe(JavaScript.JSModule);
+  AttrModule=Runtime.Safe(Next.AttrModule);
+  return Utilities=Runtime.Safe(Next.Utilities);
  });
  Runtime.OnLoad(function()
  {
-  Client.renderRolls();
+  Client.data();
+  Client.countries();
+  Client.colors();
   Client.Main();
+  ChartingUtil.randomColor();
   return;
  });
 }());

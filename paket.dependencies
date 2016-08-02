@@ -8,3 +8,5 @@ nuget Unquote
 nuget xunit
 nuget WebSharper
 nuget WebSharper.UI.Next
+nuget WebSharper.Data
+nuget WebSharper.Charting
