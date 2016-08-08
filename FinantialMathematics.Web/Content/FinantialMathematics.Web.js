@@ -15755,6 +15755,1767 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
  });
 }());
 
+(function () {
+    var lastTime = 0;
+    var vendors = ['webkit', 'moz'];
+    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+        window.cancelAnimationFrame =
+          window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function (callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function () { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function (id) {
+            clearTimeout(id);
+        };
+}());
+;
+(function()
+{
+ var Global=this,Runtime=this.IntelliFactory.Runtime,UI,Next,Formlets,Controls,Doc,List,AttrModule,Formlet1,View,Layout,Var,T,Collections,Dictionary,Result,View1,Formlet,Builder,ListModel,Arrays,Seq,Array,Key,Enumerator,Submitter,AttrProxy,Option,RegExp,Validation;
+ Runtime.Define(Global,{
+  WebSharper:{
+   UI:{
+    Next:{
+     Formlets:{
+      Controls:{
+       CheckBox:function(init)
+       {
+        return Controls["InputInit'"](init,function(_var)
+        {
+         return Controls.CheckBoxLayout(_var);
+        });
+       },
+       CheckBoxLayout:function(_var)
+       {
+        return Doc.CheckBox(List.ofArray([AttrModule.Class("inputCheckbox")]),_var);
+       },
+       CheckBoxVar:function(_var)
+       {
+        return Controls["InputVar'"](_var,function(_var1)
+        {
+         return Controls.CheckBoxLayout(_var1);
+        });
+       },
+       FloatInput:function(init)
+       {
+        return Controls["InputInit'"](init,function(_var)
+        {
+         return Controls.FloatInputLayout(_var);
+        });
+       },
+       FloatInputLayout:function(_var)
+       {
+        return Doc.FloatInput(List.ofArray([AttrModule.Class("inputText")]),_var);
+       },
+       FloatInputUnchecked:function(init)
+       {
+        return Controls["InputInit'"](init,function(_var)
+        {
+         return Controls.FloatInputUncheckedLayout(_var);
+        });
+       },
+       FloatInputUncheckedLayout:function(_var)
+       {
+        return Doc.FloatInputUnchecked(List.ofArray([AttrModule.Class("inputText")]),_var);
+       },
+       FloatInputVar:function(_var)
+       {
+        return Controls["InputVar'"](_var,function(_var1)
+        {
+         return Controls.FloatInputLayout(_var1);
+        });
+       },
+       FloatInputVarUnchecked:function(_var)
+       {
+        return Controls["InputVar'"](_var,function(_var1)
+        {
+         return Controls.FloatInputUncheckedLayout(_var1);
+        });
+       },
+       Input:function(init)
+       {
+        return Controls["InputInit'"](init,function(_var)
+        {
+         return Controls.InputLayout(_var);
+        });
+       },
+       "Input'":function(_var,layout)
+       {
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var _var1,arg00,arg10;
+          _var1=_var(null);
+          arg00=function(arg0)
+          {
+           return{
+            $:0,
+            $0:arg0
+           };
+          };
+          arg10=_var1.get_View();
+          return{
+           View:View.Map(arg00,arg10),
+           Layout:List.ofArray([Layout.Item(layout(_var1))])
+          };
+         }
+        });
+       },
+       "InputInit'":function(init,layout)
+       {
+        return Controls["Input'"](function()
+        {
+         return Var.Create(init);
+        },layout);
+       },
+       InputLayout:function(_var)
+       {
+        return Doc.Input(List.ofArray([AttrModule.Class("inputText")]),_var);
+       },
+       InputVar:function(_var)
+       {
+        return Controls["InputVar'"](_var,function(_var1)
+        {
+         return Controls.InputLayout(_var1);
+        });
+       },
+       "InputVar'":function(_var,layout)
+       {
+        return Controls["Input'"](function()
+        {
+         return _var;
+        },layout);
+       },
+       IntInput:function(init)
+       {
+        return Controls["InputInit'"](init,function(_var)
+        {
+         return Controls.IntInputLayout(_var);
+        });
+       },
+       IntInputLayout:function(_var)
+       {
+        return Doc.IntInput(List.ofArray([AttrModule.Class("inputText")]),_var);
+       },
+       IntInputUnchecked:function(init)
+       {
+        return Controls["InputInit'"](init,function(_var)
+        {
+         return Controls.IntInputUncheckedLayout(_var);
+        });
+       },
+       IntInputUncheckedLayout:function(_var)
+       {
+        return Doc.IntInputUnchecked(List.ofArray([AttrModule.Class("inputText")]),_var);
+       },
+       IntInputVar:function(_var)
+       {
+        return Controls["InputVar'"](_var,function(_var1)
+        {
+         return Controls.IntInputLayout(_var1);
+        });
+       },
+       IntInputVarUnchecked:function(_var)
+       {
+        return Controls["InputVar'"](_var,function(_var1)
+        {
+         return Controls.IntInputUncheckedLayout(_var1);
+        });
+       },
+       Radio:function(init,items)
+       {
+        return Controls["Radio'"](function()
+        {
+         return Var.Create(init);
+        },items);
+       },
+       "Radio'":function(_var,items)
+       {
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var _var1,arg00,arg10,x,mapping;
+          _var1=_var(null);
+          arg00=function(arg0)
+          {
+           return{
+            $:0,
+            $0:arg0
+           };
+          };
+          arg10=_var1.get_View();
+          x=List.rev(items);
+          mapping=function(tupledArg)
+          {
+           var value,label,arg101,arg20;
+           value=tupledArg[0];
+           label=tupledArg[1];
+           arg101=Runtime.New(T,{
+            $:0
+           });
+           arg20=List.ofArray([Doc.Radio(List.ofArray([AttrModule.Class("inputRadio")]),value,_var1),Doc.TextNode(label)]);
+           return Layout.Item(Doc.Element("label",arg101,arg20));
+          };
+          return{
+           View:View.Map(arg00,arg10),
+           Layout:List.map(mapping,x)
+          };
+         }
+        });
+       },
+       RadioVar:function(_var,items)
+       {
+        return Controls["Radio'"](function()
+        {
+         return _var;
+        },items);
+       },
+       Select:function(init,items)
+       {
+        return Controls["Select'"](function(layout)
+        {
+         return Controls["InputInit'"](init,layout);
+        },items);
+       },
+       "Select'":function(mk,items)
+       {
+        var labels,mapping,values,_arg00_,optionText;
+        labels=Dictionary.New12();
+        mapping=function(tupledArg)
+        {
+         var value,label;
+         value=tupledArg[0];
+         label=tupledArg[1];
+         labels.set_Item(value,label);
+         return value;
+        };
+        values=List.map(mapping,items);
+        _arg00_=Runtime.New(T,{
+         $:0
+        });
+        optionText=function(v)
+        {
+         return labels.get_Item(v);
+        };
+        return mk(function(_arg30_)
+        {
+         return Doc.Select(_arg00_,optionText,values,_arg30_);
+        });
+       },
+       SelectVar:function(_var,items)
+       {
+        return Controls["Select'"](function(layout)
+        {
+         return Controls["InputVar'"](_var,layout);
+        },items);
+       }
+      },
+      Formlet:{
+       Bind:function(_arg1,f)
+       {
+        var flX;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flX1,f1,arg10,v;
+          flX1=flX(null);
+          f1=function(x)
+          {
+           return(f(x).get_Data())(null);
+          };
+          arg10=flX1.View;
+          v=View.Map(function(rX)
+          {
+           return Result.Map(f1,rX);
+          },arg10);
+          return{
+           View:View1.Bind(function(_arg2)
+           {
+            var _,m,x;
+            if(_arg2.$==1)
+             {
+              m=_arg2.$0;
+              _=View1.Const({
+               $:1,
+               $0:m
+              });
+             }
+            else
+             {
+              x=_arg2.$0;
+              _=x.View;
+             }
+            return _;
+           },v),
+           Layout:Runtime.New(T,{
+            $:1,
+            $0:Layout.Varying(View.Map(function(_arg3)
+            {
+             var _,flY;
+             if(_arg3.$==0)
+              {
+               flY=_arg3.$0;
+               _=flY.Layout;
+              }
+             else
+              {
+               _=Runtime.New(T,{
+                $:0
+               });
+              }
+             return _;
+            },v)),
+            $1:flX1.Layout
+           })
+          };
+         }
+        });
+       },
+       Builder:Runtime.Class({
+        Bind:function(flX,f)
+        {
+         return Formlet.Bind(flX,f);
+        },
+        Return:function(x)
+        {
+         return Formlet.Return(x);
+        },
+        ReturnFrom:function(flX)
+        {
+         return flX;
+        }
+       },{
+        New:function()
+        {
+         return Runtime.New(this,{});
+        }
+       }),
+       Do:Runtime.Field(function()
+       {
+        return Builder.New();
+       }),
+       Horizontal:function(_arg1)
+       {
+        var flX;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flX1,toHorizontal,Layout1;
+          flX1=flX(null);
+          toHorizontal=function(_arg2)
+          {
+           var _,_1,l,matchValue,_2,ls,v;
+           if(_arg2.$==1)
+            {
+             if(_arg2.$1.$==0)
+              {
+               l=_arg2.$0;
+               matchValue=l.Shape;
+               if(matchValue.$==3)
+                {
+                 ls=matchValue.$0;
+                 _2=Runtime.New(Layout,{
+                  Shape:{
+                   $:2,
+                   $0:ls
+                  },
+                  Label:l.Label
+                 });
+                }
+               else
+                {
+                 if(matchValue.$==1)
+                  {
+                   v=matchValue.$0;
+                   _2=Runtime.New(Layout,{
+                    Shape:{
+                     $:1,
+                     $0:View.Map(toHorizontal,v)
+                    },
+                    Label:l.Label
+                   });
+                  }
+                 else
+                  {
+                   _2=l;
+                  }
+                }
+               _1=List.ofArray([_2]);
+              }
+             else
+              {
+               _1=List.ofArray([Runtime.New(Layout,{
+                Shape:{
+                 $:2,
+                 $0:_arg2
+                },
+                Label:{
+                 $:0
+                }
+               })]);
+              }
+             _=_1;
+            }
+           else
+            {
+             _=Runtime.New(T,{
+              $:0
+             });
+            }
+           return _;
+          };
+          Layout1=toHorizontal(flX1.Layout);
+          return{
+           View:flX1.View,
+           Layout:Layout1
+          };
+         }
+        });
+       },
+       LiftResult:function(flX)
+       {
+        return Formlet.MapResult(function(arg0)
+        {
+         return{
+          $:0,
+          $0:arg0
+         };
+        },flX);
+       },
+       Many:function(_arg1)
+       {
+        var f;
+        f=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var arg00,arg10,m,x,arg001,arg101,arg002,arg102,v,f1,z,arg003,re,arg104,arg201,f3,z1,re1;
+          arg00=function(tuple)
+          {
+           return tuple[0];
+          };
+          arg10=Runtime.New(T,{
+           $:0
+          });
+          m=ListModel.Create(arg00,arg10);
+          x=m.get_View();
+          arg001=m.get_Key();
+          arg101=function(tuple)
+          {
+           return tuple[1];
+          };
+          arg002=function(source)
+          {
+           return Arrays.ofSeq(source);
+          };
+          arg102=View.MapSeqCachedBy(arg001,arg101,x);
+          v=View.Map(arg002,arg102);
+          f1=function(fl)
+          {
+           var f2;
+           f2=function(value)
+           {
+            return[value];
+           };
+           return View.Map(function(rX)
+           {
+            return Result.Map(f2,rX);
+           },fl.View);
+          };
+          z=View1.Const({
+           $:0,
+           $0:Seq.empty()
+          });
+          arg003=function(r1)
+          {
+           return function(r2)
+           {
+            return Result.Append(r1,r2);
+           };
+          };
+          re=function(arg103)
+          {
+           return function(arg20)
+           {
+            return View.Map2(arg003,arg103,arg20);
+           };
+          };
+          arg104=List.ofArray([AttrModule.Class("addIcon"),AttrModule.Handler("click",function()
+          {
+           return function()
+           {
+            return m.Add([Key.Fresh(),f(null)]);
+           };
+          })]);
+          arg201=Runtime.New(T,{
+           $:0
+          });
+          f3=function(fl)
+          {
+           return fl.Layout;
+          };
+          z1=Runtime.New(T,{
+           $:0
+          });
+          re1=function(x1)
+          {
+           return function(y)
+           {
+            return List.append(y,x1);
+           };
+          };
+          return{
+           View:View1.Bind(function(a)
+           {
+            return Array.MapReduce(f1,z,re,a);
+           },v),
+           Layout:List.ofArray([Layout.Item(Doc.Element("div",arg104,arg201)),Layout.Varying(View.Map(function(a)
+           {
+            return Array.MapReduce(f3,z1,re1,a);
+           },v))])
+          };
+         }
+        });
+       },
+       ManyWithModel:function(m,insertInit,f)
+       {
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var arg00,arg10,mf,v,cb,mapping,v1,f1,z,arg001,re,arg102,arg201,x1,arg002,f3,z1,re1;
+          arg00=function(tuple)
+          {
+           return tuple[0];
+          };
+          arg10=Runtime.New(T,{
+           $:0
+          });
+          mf=ListModel.Create(arg00,arg10);
+          m.Iter(function(x)
+          {
+           var k;
+           k=(m.get_Key())(x);
+           return mf.Add([k,(f(m.Lens(k)).get_Data())(null)]);
+          });
+          v=m.get_View();
+          cb=View.Map(function(xs)
+          {
+           var enumerator,_,x,k,inputSequence,enumerator1,_1,forLoopVar,k1;
+           enumerator=Enumerator.Get(xs);
+           try
+           {
+            while(enumerator.MoveNext())
+             {
+              x=enumerator.get_Current();
+              k=(m.get_Key())(x);
+              !mf.ContainsKey(k)?mf.Add([k,(f(m.Lens(k)).get_Data())(null)]):null;
+             }
+           }
+           finally
+           {
+            enumerator.Dispose!=undefined?enumerator.Dispose():null;
+           }
+           inputSequence=mf.Var.get_Value();
+           enumerator1=Enumerator.Get(inputSequence);
+           try
+           {
+            while(enumerator1.MoveNext())
+             {
+              forLoopVar=enumerator1.get_Current();
+              k1=forLoopVar[0];
+              !m.ContainsKey(k1)?mf.RemoveByKey(k1):null;
+             }
+           }
+           finally
+           {
+            enumerator1.Dispose!=undefined?enumerator1.Dispose():null;
+           }
+           return Doc.get_Empty();
+          },v);
+          mapping=function(tuple)
+          {
+           return tuple[1];
+          };
+          v1=View.Map(function(x)
+          {
+           var source;
+           source=Seq.map(mapping,x);
+           return Arrays.ofSeq(source);
+          },mf.get_View());
+          f1=function(fl)
+          {
+           var f2;
+           f2=function(value)
+           {
+            return[value];
+           };
+           return View.Map(function(rX)
+           {
+            return Result.Map(f2,rX);
+           },fl.View);
+          };
+          z=View1.Const({
+           $:0,
+           $0:Seq.empty()
+          });
+          arg001=function(r1)
+          {
+           return function(r2)
+           {
+            return Result.Append(r1,r2);
+           };
+          };
+          re=function(arg101)
+          {
+           return function(arg20)
+           {
+            return View.Map2(arg001,arg101,arg20);
+           };
+          };
+          arg102=List.ofArray([AttrModule.Class("addIcon"),AttrModule.Handler("click",function()
+          {
+           return function()
+           {
+            return m.Add(insertInit(null));
+           };
+          })]);
+          arg201=Runtime.New(T,{
+           $:0
+          });
+          x1=Doc.Element("div",arg102,arg201);
+          arg002=Doc.EmbedView(cb);
+          f3=function(fl)
+          {
+           return fl.Layout;
+          };
+          z1=Runtime.New(T,{
+           $:0
+          });
+          re1=function(x)
+          {
+           return function(y)
+           {
+            return List.append(y,x);
+           };
+          };
+          return{
+           View:View1.Bind(function(a)
+           {
+            return Array.MapReduce(f1,z,re,a);
+           },v1),
+           Layout:List.ofArray([Layout.Item(Doc.Append(arg002,x1)),Layout.Varying(View.Map(function(a)
+           {
+            return Array.MapReduce(f3,z1,re1,a);
+           },v1))])
+          };
+         }
+        });
+       },
+       Map:function(f,flX)
+       {
+        return Formlet.MapResult(function(rX)
+        {
+         return Result.Map(f,rX);
+        },flX);
+       },
+       MapLayout:function(f,_arg1)
+       {
+        var flX;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flX1,Layout1;
+          flX1=flX(null);
+          Layout1=f(flX1.Layout);
+          return{
+           View:flX1.View,
+           Layout:Layout1
+          };
+         }
+        });
+       },
+       MapResult:function(f,_arg1)
+       {
+        var flX;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flX1;
+          flX1=flX(null);
+          return{
+           View:View.Map(f,flX1.View),
+           Layout:flX1.Layout
+          };
+         }
+        });
+       },
+       MapToResult:function(f,flX)
+       {
+        return Formlet.MapResult(function(rX)
+        {
+         return Result.Bind(f,rX);
+        },flX);
+       },
+       OfDoc:function(f)
+       {
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          return{
+           View:View1.Const({
+            $:0,
+            $0:null
+           }),
+           Layout:List.ofArray([Layout.Item(f(null))])
+          };
+         }
+        });
+       },
+       Return:function(x)
+       {
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          return{
+           View:View1.Const({
+            $:0,
+            $0:x
+           }),
+           Layout:Runtime.New(T,{
+            $:0
+           })
+          };
+         }
+        });
+       },
+       Run:function(f,flX)
+       {
+        return Formlet.RunWithLayout(function(arg00)
+        {
+         return Layout.Flat(arg00);
+        },f,flX);
+       },
+       RunWithLayout:function(render,f,_arg1)
+       {
+        var flX,flX1,_arg00_,_arg10_,x1,arg00;
+        flX=_arg1.$0;
+        flX1=flX(null);
+        _arg00_=function(r)
+        {
+         var _,x;
+         if(r.$==1)
+          {
+           _=null;
+          }
+         else
+          {
+           x=r.$0;
+           _=f(x);
+          }
+         return Doc.get_Empty();
+        };
+        _arg10_=flX1.View;
+        x1=Doc.BindView(_arg00_,_arg10_);
+        arg00=render(Layout.OfList(flX1.Layout));
+        return Doc.Append(arg00,x1);
+       },
+       Vertical:function(_arg1)
+       {
+        var flX;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flX1,toVertical,Layout1;
+          flX1=flX(null);
+          toVertical=function(_arg2)
+          {
+           var _,_1,l,matchValue,_2,ls,v;
+           if(_arg2.$==1)
+            {
+             if(_arg2.$1.$==0)
+              {
+               l=_arg2.$0;
+               matchValue=l.Shape;
+               if(matchValue.$==2)
+                {
+                 ls=matchValue.$0;
+                 _2=Runtime.New(Layout,{
+                  Shape:{
+                   $:3,
+                   $0:ls
+                  },
+                  Label:l.Label
+                 });
+                }
+               else
+                {
+                 if(matchValue.$==1)
+                  {
+                   v=matchValue.$0;
+                   _2=Runtime.New(Layout,{
+                    Shape:{
+                     $:1,
+                     $0:View.Map(toVertical,v)
+                    },
+                    Label:l.Label
+                   });
+                  }
+                 else
+                  {
+                   _2=l;
+                  }
+                }
+               _1=List.ofArray([_2]);
+              }
+             else
+              {
+               _1=List.ofArray([Runtime.New(Layout,{
+                Shape:{
+                 $:3,
+                 $0:_arg2
+                },
+                Label:{
+                 $:0
+                }
+               })]);
+              }
+             _=_1;
+            }
+           else
+            {
+             _=Runtime.New(T,{
+              $:0
+             });
+            }
+           return _;
+          };
+          Layout1=toVertical(flX1.Layout);
+          return{
+           View:flX1.View,
+           Layout:Layout1
+          };
+         }
+        });
+       },
+       WithFormContainer:function(flX)
+       {
+        var f;
+        f=function(d)
+        {
+         var arg10,arg20;
+         arg10=List.ofArray([AttrModule.Class("formlet")]);
+         arg20=List.ofArray([d]);
+         return Doc.Element("form",arg10,arg20);
+        };
+        return Formlet.WrapLayout(f,flX);
+       },
+       WithLabel:function(label,flX)
+       {
+        return Formlet.MapLayout(function(_arg1)
+        {
+         var _,_1,x,Label;
+         if(_arg1.$==1)
+          {
+           if(_arg1.$1.$==0)
+            {
+             x=_arg1.$0;
+             Label={
+              $:1,
+              $0:label
+             };
+             _1=List.ofArray([Runtime.New(Layout,{
+              Shape:x.Shape,
+              Label:Label
+             })]);
+            }
+           else
+            {
+             _1=List.ofArray([Runtime.New(Layout,{
+              Shape:{
+               $:3,
+               $0:_arg1
+              },
+              Label:{
+               $:1,
+               $0:label
+              }
+             })]);
+            }
+           _=_1;
+          }
+         else
+          {
+           _=List.ofArray([Runtime.New(Layout,{
+            Shape:{
+             $:3,
+             $0:_arg1
+            },
+            Label:{
+             $:1,
+             $0:label
+            }
+           })]);
+          }
+         return _;
+        },flX);
+       },
+       WithSubmit:function(txt,_arg1)
+       {
+        var flX;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flX1,arg00,arg10,sub,arg101,arg20;
+          flX1=flX(null);
+          arg00=flX1.View;
+          arg10={
+           $:1,
+           $0:Runtime.New(T,{
+            $:0
+           })
+          };
+          sub=Submitter.Create(arg00,arg10);
+          arg101=List.ofArray([AttrProxy.Create("type","button"),AttrProxy.Create("value",txt),AttrModule.Class("submitButton"),AttrModule.Handler("click",function()
+          {
+           return function()
+           {
+            return sub.Trigger();
+           };
+          }),AttrModule.DynamicPred("disabled",View.Map(function(x)
+          {
+           return Result.IsFailure(x);
+          },sub.get_Input()),View1.Const("disabled"))]);
+          arg20=Runtime.New(T,{
+           $:0
+          });
+          return{
+           View:sub.get_View(),
+           Layout:Runtime.New(T,{
+            $:1,
+            $0:Layout.Item(Doc.Element("input",arg101,arg20)),
+            $1:flX1.Layout
+           })
+          };
+         }
+        });
+       },
+       WithTextLabel:function(label,flX)
+       {
+        var f;
+        f=function(l)
+        {
+         var label1,arg10,arg20,_,_1,x;
+         arg10=Runtime.New(T,{
+          $:0
+         });
+         arg20=List.ofArray([Doc.TextNode(label)]);
+         label1={
+          $:1,
+          $0:Doc.Element("label",arg10,arg20)
+         };
+         if(l.$==1)
+          {
+           if(l.$1.$==0)
+            {
+             x=l.$0;
+             _1=List.ofArray([Runtime.New(Layout,{
+              Shape:x.Shape,
+              Label:label1
+             })]);
+            }
+           else
+            {
+             _1=List.ofArray([Runtime.New(Layout,{
+              Shape:{
+               $:3,
+               $0:l
+              },
+              Label:label1
+             })]);
+            }
+           _=_1;
+          }
+         else
+          {
+           _=List.ofArray([Runtime.New(Layout,{
+            Shape:{
+             $:3,
+             $0:l
+            },
+            Label:label1
+           })]);
+          }
+         return _;
+        };
+        return Formlet.MapLayout(f,flX);
+       },
+       WrapLayout:function(f,flX)
+       {
+        var f1;
+        f1=function(ls)
+        {
+         var arg10;
+         arg10=Layout.OfList(ls);
+         return List.ofArray([Layout.Wrap(f,arg10)]);
+        };
+        return Formlet.MapLayout(f1,flX);
+       }
+      },
+      Formlet1:Runtime.Class({
+       get_Data:function()
+       {
+        var d;
+        d=this.$0;
+        return d;
+       }
+      }),
+      Layout:Runtime.Class({},{
+       Flat:function(l)
+       {
+        var label,hel,vel,hl,vl,full;
+        label=function(l1,x)
+        {
+         var matchValue,_,l2,arg10,arg20;
+         matchValue=l1.Label;
+         if(matchValue.$==1)
+          {
+           l2=matchValue.$0;
+           arg10=Runtime.New(T,{
+            $:0
+           });
+           arg20=List.ofArray([l2,x]);
+           _=List.ofArray([Doc.Element("label",arg10,arg20)]);
+          }
+         else
+          {
+           _=List.ofArray([x]);
+          }
+         return _;
+        };
+        hel=function(l1,x)
+        {
+         var arg10,arg20;
+         arg10=List.ofArray([AttrModule.Style("display","inline-block")]);
+         arg20=label(l1,x);
+         return Doc.Element("div",arg10,arg20);
+        };
+        vel=function(l1,x)
+        {
+         var arg10,arg20;
+         arg10=Runtime.New(T,{
+          $:0
+         });
+         arg20=label(l1,x);
+         return Doc.Element("div",arg10,arg20);
+        };
+        hl=function(x)
+        {
+         var x1,mapping;
+         x1=List.rev(x);
+         mapping=function(l1)
+         {
+          var matchValue,_,ls,x2,v,_arg00_,l2,f,ls1;
+          matchValue=l1.Shape;
+          if(matchValue.$==3)
+           {
+            ls=matchValue.$0;
+            _=List.ofArray([hel(l1,Doc.Concat(vl(ls)))]);
+           }
+          else
+           {
+            if(matchValue.$==0)
+             {
+              x2=matchValue.$0;
+              _=List.ofArray([hel(l1,x2)]);
+             }
+            else
+             {
+              if(matchValue.$==1)
+               {
+                v=matchValue.$0;
+                _arg00_=function(x3)
+                {
+                 var arg00;
+                 arg00=hl(x3);
+                 return Doc.Concat(arg00);
+                };
+                _=List.ofArray([Doc.BindView(_arg00_,v)]);
+               }
+              else
+               {
+                if(matchValue.$==4)
+                 {
+                  l2=matchValue.$0;
+                  f=matchValue.$1;
+                  _=List.ofArray([f(full(Runtime.New(Layout,{
+                   Shape:l2,
+                   Label:{
+                    $:0
+                   }
+                  })))]);
+                 }
+                else
+                 {
+                  ls1=matchValue.$0;
+                  _=hl(ls1);
+                 }
+               }
+             }
+           }
+          return _;
+         };
+         return List.collect(mapping,x1);
+        };
+        vl=function(x)
+        {
+         var x1,mapping;
+         x1=List.rev(x);
+         mapping=function(l1)
+         {
+          var matchValue,_,ls,x2,v,_arg00_,l2,f,ls1;
+          matchValue=l1.Shape;
+          if(matchValue.$==3)
+           {
+            ls=matchValue.$0;
+            _=vl(ls);
+           }
+          else
+           {
+            if(matchValue.$==0)
+             {
+              x2=matchValue.$0;
+              _=List.ofArray([vel(l1,x2)]);
+             }
+            else
+             {
+              if(matchValue.$==1)
+               {
+                v=matchValue.$0;
+                _arg00_=function(x3)
+                {
+                 var arg00;
+                 arg00=vl(x3);
+                 return Doc.Concat(arg00);
+                };
+                _=List.ofArray([Doc.BindView(_arg00_,v)]);
+               }
+              else
+               {
+                if(matchValue.$==4)
+                 {
+                  l2=matchValue.$0;
+                  f=matchValue.$1;
+                  _=List.ofArray([f(full(Runtime.New(Layout,{
+                   Shape:l2,
+                   Label:{
+                    $:0
+                   }
+                  })))]);
+                 }
+                else
+                 {
+                  ls1=matchValue.$0;
+                  _=List.ofArray([vel(l1,Doc.Concat(hl(ls1)))]);
+                 }
+               }
+             }
+           }
+          return _;
+         };
+         return List.collect(mapping,x1);
+        };
+        full=function(l1)
+        {
+         return Doc.Concat(vl(List.ofArray([l1])));
+        };
+        return full(l);
+       },
+       Horizontal:function(xs)
+       {
+        return Runtime.New(Layout,{
+         Shape:{
+          $:2,
+          $0:xs
+         },
+         Label:{
+          $:0
+         }
+        });
+       },
+       Item:function(doc)
+       {
+        return Runtime.New(Layout,{
+         Shape:{
+          $:0,
+          $0:doc
+         },
+         Label:{
+          $:0
+         }
+        });
+       },
+       OfList:function(ls)
+       {
+        var _,_1,l;
+        if(ls.$==1)
+         {
+          if(ls.$1.$==0)
+           {
+            l=ls.$0;
+            _1=l;
+           }
+          else
+           {
+            _1=Layout.Vertical(ls);
+           }
+          _=_1;
+         }
+        else
+         {
+          _=Layout.Vertical(ls);
+         }
+        return _;
+       },
+       Table:function(l)
+       {
+        var vel,vwrap,hel,hwrap,hl,vl,full;
+        vel=function(l1,x)
+        {
+         var arg10,arg20,arg101,arg201,arg102,arg202;
+         arg10=Runtime.New(T,{
+          $:0
+         });
+         arg101=Runtime.New(T,{
+          $:0
+         });
+         arg201=Option.toList(l1.Label);
+         arg102=Runtime.New(T,{
+          $:0
+         });
+         arg202=List.ofArray([x]);
+         arg20=List.ofArray([Doc.Element("td",arg101,arg201),Doc.Element("td",arg102,arg202)]);
+         return Doc.Element("tr",arg10,arg20);
+        };
+        vwrap=function(vels)
+        {
+         var arg10,arg20,arg101;
+         arg10=Runtime.New(T,{
+          $:0
+         });
+         arg101=Runtime.New(T,{
+          $:0
+         });
+         arg20=List.ofArray([Doc.Element("tbody",arg101,vels)]);
+         return Doc.Element("table",arg10,arg20);
+        };
+        hel=function(l1,x)
+        {
+         var matchValue,arg00,_,l2,arg10,arg20,arg101,arg201,arg102;
+         matchValue=l1.Label;
+         if(matchValue.$==1)
+          {
+           l2=matchValue.$0;
+           arg10=Runtime.New(T,{
+            $:0
+           });
+           arg20=List.ofArray([l2]);
+           _=Doc.Element("td",arg10,arg20);
+          }
+         else
+          {
+           _=Doc.get_Empty();
+          }
+         arg00=_;
+         arg101=Runtime.New(T,{
+          $:0
+         });
+         arg201=List.ofArray([x]);
+         arg102=Doc.Element("td",arg101,arg201);
+         return Doc.Append(arg00,arg102);
+        };
+        hwrap=function(hels)
+        {
+         var arg00,arg10;
+         arg10=Runtime.New(T,{
+          $:0
+         });
+         arg00=List.ofArray([Doc.Element("tr",arg10,hels)]);
+         return vwrap(arg00);
+        };
+        hl=function(x)
+        {
+         var x1,mapping;
+         x1=List.rev(x);
+         mapping=function(l1)
+         {
+          var matchValue,_,ls,arg00,x2,v,_arg00_,l2,f,ls1;
+          matchValue=l1.Shape;
+          if(matchValue.$==3)
+           {
+            ls=matchValue.$0;
+            arg00=vl(ls);
+            _=List.ofArray([hel(l1,vwrap(arg00))]);
+           }
+          else
+           {
+            if(matchValue.$==0)
+             {
+              x2=matchValue.$0;
+              _=List.ofArray([hel(l1,x2)]);
+             }
+            else
+             {
+              if(matchValue.$==1)
+               {
+                v=matchValue.$0;
+                _arg00_=function(x3)
+                {
+                 var arg001;
+                 arg001=hl(x3);
+                 return Doc.Concat(arg001);
+                };
+                _=List.ofArray([Doc.BindView(_arg00_,v)]);
+               }
+              else
+               {
+                if(matchValue.$==4)
+                 {
+                  l2=matchValue.$0;
+                  f=matchValue.$1;
+                  _=List.ofArray([f(full(Runtime.New(Layout,{
+                   Shape:l2,
+                   Label:{
+                    $:0
+                   }
+                  })))]);
+                 }
+                else
+                 {
+                  ls1=matchValue.$0;
+                  _=hl(ls1);
+                 }
+               }
+             }
+           }
+          return _;
+         };
+         return List.collect(mapping,x1);
+        };
+        vl=function(x)
+        {
+         var x1,mapping;
+         x1=List.rev(x);
+         mapping=function(l1)
+         {
+          var matchValue,_,ls,x2,v,_arg00_,l2,f,ls1,arg001;
+          matchValue=l1.Shape;
+          if(matchValue.$==3)
+           {
+            ls=matchValue.$0;
+            _=vl(ls);
+           }
+          else
+           {
+            if(matchValue.$==0)
+             {
+              x2=matchValue.$0;
+              _=List.ofArray([vel(l1,x2)]);
+             }
+            else
+             {
+              if(matchValue.$==1)
+               {
+                v=matchValue.$0;
+                _arg00_=function(x3)
+                {
+                 var arg00;
+                 arg00=vl(x3);
+                 return Doc.Concat(arg00);
+                };
+                _=List.ofArray([Doc.BindView(_arg00_,v)]);
+               }
+              else
+               {
+                if(matchValue.$==4)
+                 {
+                  l2=matchValue.$0;
+                  f=matchValue.$1;
+                  _=List.ofArray([f(full(Runtime.New(Layout,{
+                   Shape:l2,
+                   Label:{
+                    $:0
+                   }
+                  })))]);
+                 }
+                else
+                 {
+                  ls1=matchValue.$0;
+                  arg001=hl(ls1);
+                  _=List.ofArray([vel(l1,hwrap(arg001))]);
+                 }
+               }
+             }
+           }
+          return _;
+         };
+         return List.collect(mapping,x1);
+        };
+        full=function(l1)
+        {
+         var matchValue,_,ls,arg00,arg001,arg002,l2,f,ls1,arg003;
+         matchValue=l1.Shape;
+         if(matchValue.$==3)
+          {
+           ls=matchValue.$0;
+           arg00=vl(ls);
+           _=vwrap(arg00);
+          }
+         else
+          {
+           if(matchValue.$==0)
+            {
+             arg001=vl(List.ofArray([l1]));
+             _=vwrap(arg001);
+            }
+           else
+            {
+             if(matchValue.$==1)
+              {
+               arg002=vl(List.ofArray([l1]));
+               _=vwrap(arg002);
+              }
+             else
+              {
+               if(matchValue.$==4)
+                {
+                 l2=matchValue.$0;
+                 f=matchValue.$1;
+                 _=f(full(Runtime.New(Layout,{
+                  Shape:l2,
+                  Label:{
+                   $:0
+                  }
+                 })));
+                }
+               else
+                {
+                 ls1=matchValue.$0;
+                 arg003=hl(ls1);
+                 _=hwrap(arg003);
+                }
+              }
+            }
+          }
+         return _;
+        };
+        return full(l);
+       },
+       Varying:function(view)
+       {
+        return Runtime.New(Layout,{
+         Shape:{
+          $:1,
+          $0:view
+         },
+         Label:{
+          $:0
+         }
+        });
+       },
+       Vertical:function(xs)
+       {
+        return Runtime.New(Layout,{
+         Shape:{
+          $:3,
+          $0:xs
+         },
+         Label:{
+          $:0
+         }
+        });
+       },
+       Wrap:function(f,l)
+       {
+        return Runtime.New(Layout,{
+         Shape:{
+          $:4,
+          $0:l.Shape,
+          $1:f
+         },
+         Label:l.Label
+        });
+       }
+      }),
+      Pervasives:{
+       op_LessMultiplyGreater:function(_arg2,_arg1)
+       {
+        var flF,flX;
+        flF=_arg2.$0;
+        flX=_arg1.$0;
+        return Runtime.New(Formlet1,{
+         $:0,
+         $0:function()
+         {
+          var flF1,flX1,arg00,arg10,arg20;
+          flF1=flF(null);
+          flX1=flX(null);
+          arg00=function(rF)
+          {
+           return function(rX)
+           {
+            return Result.Apply(rF,rX);
+           };
+          };
+          arg10=flF1.View;
+          arg20=flX1.View;
+          return{
+           View:View.Map2(arg00,arg10,arg20),
+           Layout:List.append(flX1.Layout,flF1.Layout)
+          };
+         }
+        });
+       }
+      },
+      Result:{
+       Append:function(r1,r2)
+       {
+        var _,m1,_1,m2,s1,_2,s2;
+        if(r1.$==1)
+         {
+          m1=r1.$0;
+          if(r2.$==1)
+           {
+            m2=r2.$0;
+            _1={
+             $:1,
+             $0:List.append(m1,m2)
+            };
+           }
+          else
+           {
+            _1=r2;
+           }
+          _=_1;
+         }
+        else
+         {
+          s1=r1.$0;
+          if(r2.$==1)
+           {
+            _2=r2;
+           }
+          else
+           {
+            s2=r2.$0;
+            _2={
+             $:0,
+             $0:Seq.append(s1,s2)
+            };
+           }
+          _=_2;
+         }
+        return _;
+       },
+       Apply:function(rF,rX)
+       {
+        var _,mF,_1,mX,f,_2,mX1,x;
+        if(rF.$==1)
+         {
+          mF=rF.$0;
+          if(rX.$==1)
+           {
+            mX=rX.$0;
+            _1={
+             $:1,
+             $0:List.append(mF,mX)
+            };
+           }
+          else
+           {
+            _1={
+             $:1,
+             $0:mF
+            };
+           }
+          _=_1;
+         }
+        else
+         {
+          f=rF.$0;
+          if(rX.$==1)
+           {
+            mX1=rX.$0;
+            _2={
+             $:1,
+             $0:mX1
+            };
+           }
+          else
+           {
+            x=rX.$0;
+            _2={
+             $:0,
+             $0:f(x)
+            };
+           }
+          _=_2;
+         }
+        return _;
+       },
+       Bind:function(f,rX)
+       {
+        var _,m,x;
+        if(rX.$==1)
+         {
+          m=rX.$0;
+          _={
+           $:1,
+           $0:m
+          };
+         }
+        else
+         {
+          x=rX.$0;
+          _=f(x);
+         }
+        return _;
+       },
+       IsFailure:function(x)
+       {
+        return x.$==1?true:false;
+       },
+       IsSuccess:function(x)
+       {
+        return x.$==1?false:true;
+       },
+       Map:function(f,rX)
+       {
+        var _,m,x;
+        if(rX.$==1)
+         {
+          m=rX.$0;
+          _={
+           $:1,
+           $0:m
+          };
+         }
+        else
+         {
+          x=rX.$0;
+          _={
+           $:0,
+           $0:f(x)
+          };
+         }
+        return _;
+       }
+      },
+      Validation:{
+       Is:function(pred,msg,flX)
+       {
+        var f;
+        f=function(x)
+        {
+         return pred(x)?{
+          $:0,
+          $0:x
+         }:{
+          $:1,
+          $0:List.ofArray([msg])
+         };
+        };
+        return Formlet.MapToResult(f,flX);
+       },
+       IsMatch:function(regex,msg,flX)
+       {
+        var re;
+        re=new RegExp(regex);
+        return Validation.Is(function(arg00)
+        {
+         return re.test(arg00);
+        },msg,flX);
+       },
+       IsNotEmpty:function(msg,flX)
+       {
+        return Validation.Is(function(y)
+        {
+         return""!==y;
+        },msg,flX);
+       }
+      }
+     }
+    }
+   }
+  }
+ });
+ Runtime.OnInit(function()
+ {
+  UI=Runtime.Safe(Global.WebSharper.UI);
+  Next=Runtime.Safe(UI.Next);
+  Formlets=Runtime.Safe(Next.Formlets);
+  Controls=Runtime.Safe(Formlets.Controls);
+  Doc=Runtime.Safe(Next.Doc);
+  List=Runtime.Safe(Global.WebSharper.List);
+  AttrModule=Runtime.Safe(Next.AttrModule);
+  Formlet1=Runtime.Safe(Formlets.Formlet1);
+  View=Runtime.Safe(Next.View);
+  Layout=Runtime.Safe(Formlets.Layout);
+  Var=Runtime.Safe(Next.Var);
+  T=Runtime.Safe(List.T);
+  Collections=Runtime.Safe(Global.WebSharper.Collections);
+  Dictionary=Runtime.Safe(Collections.Dictionary);
+  Result=Runtime.Safe(Formlets.Result);
+  View1=Runtime.Safe(Next.View1);
+  Formlet=Runtime.Safe(Formlets.Formlet);
+  Builder=Runtime.Safe(Formlet.Builder);
+  ListModel=Runtime.Safe(Next.ListModel);
+  Arrays=Runtime.Safe(Global.WebSharper.Arrays);
+  Seq=Runtime.Safe(Global.WebSharper.Seq);
+  Array=Runtime.Safe(Next.Array);
+  Key=Runtime.Safe(Next.Key);
+  Enumerator=Runtime.Safe(Global.WebSharper.Enumerator);
+  Submitter=Runtime.Safe(Next.Submitter);
+  AttrProxy=Runtime.Safe(Next.AttrProxy);
+  Option=Runtime.Safe(Global.WebSharper.Option);
+  RegExp=Runtime.Safe(Global.RegExp);
+  return Validation=Runtime.Safe(Formlets.Validation);
+ });
+ Runtime.OnLoad(function()
+ {
+  Formlet.Do();
+  return;
+ });
+}());
+
 (function()
 {
  var Global=this,Runtime=this.IntelliFactory.Runtime,Strings,Exception,Data,Pervasives,jQuery,Concurrency,IO,JSRuntime,Arrays,Operators,Array,Option,Unchecked,Guid,String,WBRuntime,List,JavaScript,Pervasives1;
@@ -20315,31 +22076,6 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
  });
 }());
 
-(function () {
-    var lastTime = 0;
-    var vendors = ['webkit', 'moz'];
-    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-        window.cancelAnimationFrame =
-          window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-    }
-
-    if (!window.requestAnimationFrame)
-        window.requestAnimationFrame = function (callback, element) {
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            var id = window.setTimeout(function () { callback(currTime + timeToCall); },
-              timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
-
-    if (!window.cancelAnimationFrame)
-        window.cancelAnimationFrame = function (id) {
-            clearTimeout(id);
-        };
-}());
-;
 /*!
  * Chart.js
  * http://chartjs.org/
@@ -20353,7 +22089,7 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
 },this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.bars.shift()},this),this.update()},reflow:function(){e.extend(this.BarClass.prototype,{y:this.scale.endPoint,base:this.scale.endPoint});var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();this.chart.ctx;this.scale.draw(i),e.each(this.datasets,function(t,s){e.each(t.bars,function(t,e){t.hasValue()&&(t.base=this.scale.endPoint,t.transition({x:this.scale.calculateBarX(this.datasets.length,s,e),y:this.scale.calculateY(t.value),width:this.scale.calculateBarWidth(this.datasets.length)},i).draw())},this)},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,percentageInnerCutout:50,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Doughnut",defaults:s,initialize:function(t){this.segments=[],this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,this.SegmentArc=i.Arc.extend({ctx:this.chart.ctx,x:this.chart.width/2,y:this.chart.height/2}),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.calculateTotal(t),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({value:t.value,outerRadius:this.options.animateScale?0:this.outerRadius,innerRadius:this.options.animateScale?0:this.outerRadius/100*this.options.percentageInnerCutout,fillColor:t.color,highlightColor:t.highlight||t.color,showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,startAngle:1.5*Math.PI,circumference:this.options.animateRotate?0:this.calculateCircumference(t.value),label:t.label})),e||(this.reflow(),this.update())},calculateCircumference:function(t){return 2*Math.PI*(Math.abs(t)/this.total)},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=Math.abs(t.value)},this)},update:function(){this.calculateTotal(this.segments),e.each(this.activeElements,function(t){t.restore(["fillColor"])}),e.each(this.segments,function(t){t.save()}),this.render()},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.outerRadius=(e.min([this.chart.width,this.chart.height])-this.options.segmentStrokeWidth/2)/2,e.each(this.segments,function(t){t.update({outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout})},this)},draw:function(t){var i=t?t:1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.calculateCircumference(t.value),outerRadius:this.outerRadius,innerRadius:this.outerRadius/100*this.options.percentageInnerCutout},i),t.endAngle=t.startAngle+t.circumference,t.draw(),0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle)},this)}}),i.types.Doughnut.extend({name:"Pie",defaults:e.merge(s,{percentageInnerCutout:0})})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowGridLines:!0,scaleGridLineColor:"rgba(0,0,0,.05)",scaleGridLineWidth:1,scaleShowHorizontalLines:!0,scaleShowVerticalLines:!0,bezierCurve:!0,bezierCurveTension:.4,pointDot:!0,pointDotRadius:4,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"Line",defaults:s,initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx,inRange:function(t){return Math.pow(t-this.x,2)<Math.pow(this.radius+this.hitDetectionRadius,2)}}),this.datasets=[],this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this),this.buildScale(t.labels),this.eachPoints(function(t,i){e.extend(t,{x:this.scale.calculateX(i),y:this.scale.endPoint}),t.save()},this)},this),this.render()},update:function(){this.scale.update(),e.each(this.activeElements,function(t){t.restore(["fillColor","strokeColor"])}),this.eachPoints(function(t){t.save()}),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.datasets,function(t){e.each(t.points,function(t){t.inRange(s.x,s.y)&&i.push(t)})},this),i},buildScale:function(t){var s=this,n=function(){var t=[];return s.eachPoints(function(i){t.push(i.value)}),t},o={templateString:this.options.scaleLabel,height:this.chart.height,width:this.chart.width,ctx:this.chart.ctx,textColor:this.options.scaleFontColor,fontSize:this.options.scaleFontSize,fontStyle:this.options.scaleFontStyle,fontFamily:this.options.scaleFontFamily,valuesCount:t.length,beginAtZero:this.options.scaleBeginAtZero,integersOnly:this.options.scaleIntegersOnly,calculateYRange:function(t){var i=e.calculateScaleRange(n(),t,this.fontSize,this.beginAtZero,this.integersOnly);e.extend(this,i)},xLabels:t,font:e.fontString(this.options.scaleFontSize,this.options.scaleFontStyle,this.options.scaleFontFamily),lineWidth:this.options.scaleLineWidth,lineColor:this.options.scaleLineColor,showHorizontalLines:this.options.scaleShowHorizontalLines,showVerticalLines:this.options.scaleShowVerticalLines,gridLineWidth:this.options.scaleShowGridLines?this.options.scaleGridLineWidth:0,gridLineColor:this.options.scaleShowGridLines?this.options.scaleGridLineColor:"rgba(0,0,0,0)",padding:this.options.showScale?0:this.options.pointDotRadius+this.options.pointDotStrokeWidth,showLabels:this.options.scaleShowLabels,display:this.options.showScale};this.options.scaleOverride&&e.extend(o,{calculateYRange:e.noop,steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}),this.scale=new i.Scale(o)},addData:function(t,i){e.each(t,function(t,e){this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:this.scale.calculateX(this.scale.valuesCount+1),y:this.scale.endPoint,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.addXLabel(i),this.update()},removeData:function(){this.scale.removeXLabel(),e.each(this.datasets,function(t){t.points.shift()},this),this.update()},reflow:function(){var t=e.extend({height:this.chart.height,width:this.chart.width});this.scale.update(t)},draw:function(t){var i=t||1;this.clear();var s=this.chart.ctx,n=function(t){return null!==t.value},o=function(t,i,s){return e.findNextWhere(i,n,s)||t},a=function(t,i,s){return e.findPreviousWhere(i,n,s)||t};this.scale.draw(i),e.each(this.datasets,function(t){var h=e.where(t.points,n);e.each(t.points,function(t,e){t.hasValue()&&t.transition({y:this.scale.calculateY(t.value),x:this.scale.calculateX(e)},i)},this),this.options.bezierCurve&&e.each(h,function(t,i){var s=i>0&&i<h.length-1?this.options.bezierCurveTension:0;t.controlPoints=e.splineCurve(a(t,h,i),t,o(t,h,i),s),t.controlPoints.outer.y>this.scale.endPoint?t.controlPoints.outer.y=this.scale.endPoint:t.controlPoints.outer.y<this.scale.startPoint&&(t.controlPoints.outer.y=this.scale.startPoint),t.controlPoints.inner.y>this.scale.endPoint?t.controlPoints.inner.y=this.scale.endPoint:t.controlPoints.inner.y<this.scale.startPoint&&(t.controlPoints.inner.y=this.scale.startPoint)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(h,function(t,i){if(0===i)s.moveTo(t.x,t.y);else if(this.options.bezierCurve){var e=a(t,h,i);s.bezierCurveTo(e.controlPoints.outer.x,e.controlPoints.outer.y,t.controlPoints.inner.x,t.controlPoints.inner.y,t.x,t.y)}else s.lineTo(t.x,t.y)},this),s.stroke(),this.options.datasetFill&&h.length>0&&(s.lineTo(h[h.length-1].x,this.scale.endPoint),s.lineTo(h[0].x,this.scale.endPoint),s.fillStyle=t.fillColor,s.closePath(),s.fill()),e.each(h,function(t){t.draw()})},this)}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers,s={scaleShowLabelBackdrop:!0,scaleBackdropColor:"rgba(255,255,255,0.75)",scaleBeginAtZero:!0,scaleBackdropPaddingY:2,scaleBackdropPaddingX:2,scaleShowLine:!0,segmentShowStroke:!0,segmentStrokeColor:"#fff",segmentStrokeWidth:2,animationSteps:100,animationEasing:"easeOutBounce",animateRotate:!0,animateScale:!1,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'};i.Type.extend({name:"PolarArea",defaults:s,initialize:function(t){this.segments=[],this.SegmentArc=i.Arc.extend({showStroke:this.options.segmentShowStroke,strokeWidth:this.options.segmentStrokeWidth,strokeColor:this.options.segmentStrokeColor,ctx:this.chart.ctx,innerRadius:0,x:this.chart.width/2,y:this.chart.height/2}),this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,lineArc:!0,width:this.chart.width,height:this.chart.height,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,valuesCount:t.length}),this.updateScaleRange(t),this.scale.update(),e.each(t,function(t,i){this.addData(t,i,!0)},this),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getSegmentsAtEvent(t):[];e.each(this.segments,function(t){t.restore(["fillColor"])}),e.each(i,function(t){t.fillColor=t.highlightColor}),this.showTooltip(i)}),this.render()},getSegmentsAtEvent:function(t){var i=[],s=e.getRelativePosition(t);return e.each(this.segments,function(t){t.inRange(s.x,s.y)&&i.push(t)},this),i},addData:function(t,i,e){var s=i||this.segments.length;this.segments.splice(s,0,new this.SegmentArc({fillColor:t.color,highlightColor:t.highlight||t.color,label:t.label,value:t.value,outerRadius:this.options.animateScale?0:this.scale.calculateCenterOffset(t.value),circumference:this.options.animateRotate?0:this.scale.getCircumference(),startAngle:1.5*Math.PI})),e||(this.reflow(),this.update())},removeData:function(t){var i=e.isNumber(t)?t:this.segments.length-1;this.segments.splice(i,1),this.reflow(),this.update()},calculateTotal:function(t){this.total=0,e.each(t,function(t){this.total+=t.value},this),this.scale.valuesCount=this.segments.length},updateScaleRange:function(t){var i=[];e.each(t,function(t){i.push(t.value)});var s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s,{size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2})},update:function(){this.calculateTotal(this.segments),e.each(this.segments,function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.SegmentArc.prototype,{x:this.chart.width/2,y:this.chart.height/2}),this.updateScaleRange(this.segments),this.scale.update(),e.extend(this.scale,{xCenter:this.chart.width/2,yCenter:this.chart.height/2}),e.each(this.segments,function(t){t.update({outerRadius:this.scale.calculateCenterOffset(t.value)})},this)},draw:function(t){var i=t||1;this.clear(),e.each(this.segments,function(t,e){t.transition({circumference:this.scale.getCircumference(),outerRadius:this.scale.calculateCenterOffset(t.value)},i),t.endAngle=t.startAngle+t.circumference,0===e&&(t.startAngle=1.5*Math.PI),e<this.segments.length-1&&(this.segments[e+1].startAngle=t.endAngle),t.draw()},this),this.scale.draw()}})}.call(this),function(){"use strict";var t=this,i=t.Chart,e=i.helpers;i.Type.extend({name:"Radar",defaults:{scaleShowLine:!0,angleShowLineOut:!0,scaleShowLabels:!1,scaleBeginAtZero:!0,angleLineColor:"rgba(0,0,0,.1)",angleLineWidth:1,pointLabelFontFamily:"'Arial'",pointLabelFontStyle:"normal",pointLabelFontSize:10,pointLabelFontColor:"#666",pointDot:!0,pointDotRadius:3,pointDotStrokeWidth:1,pointHitDetectionRadius:20,datasetStroke:!0,datasetStrokeWidth:2,datasetFill:!0,legendTemplate:'<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'},initialize:function(t){this.PointClass=i.Point.extend({strokeWidth:this.options.pointDotStrokeWidth,radius:this.options.pointDotRadius,display:this.options.pointDot,hitDetectionRadius:this.options.pointHitDetectionRadius,ctx:this.chart.ctx}),this.datasets=[],this.buildScale(t),this.options.showTooltips&&e.bindEvents(this,this.options.tooltipEvents,function(t){var i="mouseout"!==t.type?this.getPointsAtEvent(t):[];this.eachPoints(function(t){t.restore(["fillColor","strokeColor"])}),e.each(i,function(t){t.fillColor=t.highlightFill,t.strokeColor=t.highlightStroke}),this.showTooltip(i)}),e.each(t.datasets,function(i){var s={label:i.label||null,fillColor:i.fillColor,strokeColor:i.strokeColor,pointColor:i.pointColor,pointStrokeColor:i.pointStrokeColor,points:[]};this.datasets.push(s),e.each(i.data,function(e,n){var o;this.scale.animation||(o=this.scale.getPointPosition(n,this.scale.calculateCenterOffset(e))),s.points.push(new this.PointClass({value:e,label:t.labels[n],datasetLabel:i.label,x:this.options.animation?this.scale.xCenter:o.x,y:this.options.animation?this.scale.yCenter:o.y,strokeColor:i.pointStrokeColor,fillColor:i.pointColor,highlightFill:i.pointHighlightFill||i.pointColor,highlightStroke:i.pointHighlightStroke||i.pointStrokeColor}))},this)},this),this.render()},eachPoints:function(t){e.each(this.datasets,function(i){e.each(i.points,t,this)},this)},getPointsAtEvent:function(t){var i=e.getRelativePosition(t),s=e.getAngleFromPoint({x:this.scale.xCenter,y:this.scale.yCenter},i),n=2*Math.PI/this.scale.valuesCount,o=Math.round((s.angle-1.5*Math.PI)/n),a=[];return(o>=this.scale.valuesCount||0>o)&&(o=0),s.distance<=this.scale.drawingArea&&e.each(this.datasets,function(t){a.push(t.points[o])}),a},buildScale:function(t){this.scale=new i.RadialScale({display:this.options.showScale,fontStyle:this.options.scaleFontStyle,fontSize:this.options.scaleFontSize,fontFamily:this.options.scaleFontFamily,fontColor:this.options.scaleFontColor,showLabels:this.options.scaleShowLabels,showLabelBackdrop:this.options.scaleShowLabelBackdrop,backdropColor:this.options.scaleBackdropColor,backdropPaddingY:this.options.scaleBackdropPaddingY,backdropPaddingX:this.options.scaleBackdropPaddingX,lineWidth:this.options.scaleShowLine?this.options.scaleLineWidth:0,lineColor:this.options.scaleLineColor,angleLineColor:this.options.angleLineColor,angleLineWidth:this.options.angleShowLineOut?this.options.angleLineWidth:0,pointLabelFontColor:this.options.pointLabelFontColor,pointLabelFontSize:this.options.pointLabelFontSize,pointLabelFontFamily:this.options.pointLabelFontFamily,pointLabelFontStyle:this.options.pointLabelFontStyle,height:this.chart.height,width:this.chart.width,xCenter:this.chart.width/2,yCenter:this.chart.height/2,ctx:this.chart.ctx,templateString:this.options.scaleLabel,labels:t.labels,valuesCount:t.datasets[0].data.length}),this.scale.setScaleSize(),this.updateScaleRange(t.datasets),this.scale.buildYLabels()},updateScaleRange:function(t){var i=function(){var i=[];return e.each(t,function(t){t.data?i=i.concat(t.data):e.each(t.points,function(t){i.push(t.value)})}),i}(),s=this.options.scaleOverride?{steps:this.options.scaleSteps,stepValue:this.options.scaleStepWidth,min:this.options.scaleStartValue,max:this.options.scaleStartValue+this.options.scaleSteps*this.options.scaleStepWidth}:e.calculateScaleRange(i,e.min([this.chart.width,this.chart.height])/2,this.options.scaleFontSize,this.options.scaleBeginAtZero,this.options.scaleIntegersOnly);e.extend(this.scale,s)},addData:function(t,i){this.scale.valuesCount++,e.each(t,function(t,e){var s=this.scale.getPointPosition(this.scale.valuesCount,this.scale.calculateCenterOffset(t));this.datasets[e].points.push(new this.PointClass({value:t,label:i,x:s.x,y:s.y,strokeColor:this.datasets[e].pointStrokeColor,fillColor:this.datasets[e].pointColor}))},this),this.scale.labels.push(i),this.reflow(),this.update()},removeData:function(){this.scale.valuesCount--,this.scale.labels.shift(),e.each(this.datasets,function(t){t.points.shift()},this),this.reflow(),this.update()},update:function(){this.eachPoints(function(t){t.save()}),this.reflow(),this.render()},reflow:function(){e.extend(this.scale,{width:this.chart.width,height:this.chart.height,size:e.min([this.chart.width,this.chart.height]),xCenter:this.chart.width/2,yCenter:this.chart.height/2}),this.updateScaleRange(this.datasets),this.scale.setScaleSize(),this.scale.buildYLabels()},draw:function(t){var i=t||1,s=this.chart.ctx;this.clear(),this.scale.draw(),e.each(this.datasets,function(t){e.each(t.points,function(t,e){t.hasValue()&&t.transition(this.scale.getPointPosition(e,this.scale.calculateCenterOffset(t.value)),i)},this),s.lineWidth=this.options.datasetStrokeWidth,s.strokeStyle=t.strokeColor,s.beginPath(),e.each(t.points,function(t,i){0===i?s.moveTo(t.x,t.y):s.lineTo(t.x,t.y)},this),s.closePath(),s.stroke(),s.fillStyle=t.fillColor,s.fill(),e.each(t.points,function(t){t.hasValue()&&t.draw()})},this)}})}.call(this);;
 (function()
 {
- var Global=this,Runtime=this.IntelliFactory.Runtime,List,UI,Next,Doc,Arrays,String,AttrProxy,T,Random,Charting,Pervasives,Color,Chart,Renderers,ChartJs,FinantialMathematics,Web,ChartingUtil,jQuery,Client,Concurrency,Data,WBRuntime,WorldBankRuntime,Seq,Collections,ResizeArray,ResizeArrayProxy,JavaScript,JSModule,AttrModule,Utilities;
+ var Global=this,Runtime=this.IntelliFactory.Runtime,List,UI,Next,Doc,Arrays,String,AttrProxy,T,Random,Charting,Pervasives,Color,Chart,Renderers,ChartJs,FinantialMathematics,Web,ChartingUtil,jQuery,Utilities,Client,Concurrency,Data,WBRuntime,WorldBankRuntime,Seq,View,Collections,FSharpMap,ResizeArray,ResizeArrayProxy,JavaScript,JSModule,MapModule,PrintfHelpers,Var,AttrModule;
  Runtime.Define(Global,{
   FinantialMathematics:{
    Web:{
@@ -20424,8 +22160,8 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
        $:1,
        $0:{
         $:0,
-        $0:600,
-        $1:400
+        $0:750,
+        $1:500
        }
       },{
        $:1,
@@ -20438,8 +22174,11 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
     Client:{
      Main:Runtime.Field(function()
      {
+      var arg20,arg201;
       jQuery("#main").empty();
-      return Doc.RunById("main",Doc.Concat(List.ofArray([Client["chartDiv'"]("Broad money growth (annual %)",Client.chart0()),Client["chartDiv'"]("5-bank asset concentration",Client.chart1())])));
+      arg20=List.ofArray([Client.plotSelectionDoc()]);
+      arg201=List.ofArray([Doc.TextView(Client.varMu().get_View())]);
+      return Doc.RunById("main",Utilities.divc("panel-default",List.ofArray([Utilities.divc("panel-body",List.ofArray([Doc.Element("div",[],arg20),Doc.Element("label",[],arg201),Doc.EmbedView(Client.chartDiv())]))])));
      }),
      chart0:function()
      {
@@ -20479,13 +22218,35 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
        });
       });
      },
-     "chartDiv'":function(title,chart)
+     chartDiv:Runtime.Field(function()
      {
-      return ChartingUtil.chartDiv(title,chart,function()
+      var arg00,arg10;
+      arg00=function(x)
+      {
+       var arg20;
+       arg20=List.ofArray([Client["chartDiv'"](x)]);
+       return Doc.Element("div",[],arg20);
+      };
+      arg10=Client.varMu().get_View();
+      return View.Map(arg00,arg10);
+     }),
+     "chartDiv'":function(varMuValue)
+     {
+      return ChartingUtil.chartDiv(varMuValue,(Client.charts().get_Item(varMuValue))(null),function()
       {
        return Client["legent'"]();
       });
      },
+     charts:Runtime.Field(function()
+     {
+      return FSharpMap.New1([]).Add("Broad money growth (annual %)",function()
+      {
+       return Client.chart0();
+      }).Add("5-bank asset concentration",function()
+      {
+       return Client.chart1();
+      });
+     }),
      colors:Runtime.Field(function()
      {
       return Arrays.map(function()
@@ -20539,6 +22300,27 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
        return tupledArg[0]<<0;
       },JSModule.GetFields(i)))));
      },
+     plotSelection:Runtime.Field(function()
+     {
+      var mapping,table,list;
+      mapping=function(tupledArg)
+      {
+       var k;
+       k=tupledArg[0];
+       tupledArg[1];
+       return k;
+      };
+      table=Client.charts();
+      list=Seq.toList(MapModule.ToSeq(table));
+      return List.map(mapping,list);
+     }),
+     plotSelectionDoc:Runtime.Field(function()
+     {
+      return Doc.Select(List.ofArray([Utilities.cls("form-control")]),function(_)
+      {
+       return PrintfHelpers.prettyPrint(_);
+      },Client.plotSelection(),Client.varMu());
+     }),
      "renderChartLines'":function(data)
      {
       var colors;
@@ -20554,7 +22336,11 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
       };
       data1=Arrays.map(mapping,data);
       return Client["renderChartLines'"](data1);
-     }
+     },
+     varMu:Runtime.Field(function()
+     {
+      return Var.Create(Client.plotSelection().get_Item(0));
+     })
     }
    }
   },
@@ -20609,25 +22395,35 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
   Web=Runtime.Safe(FinantialMathematics.Web);
   ChartingUtil=Runtime.Safe(Web.ChartingUtil);
   jQuery=Runtime.Safe(Global.jQuery);
+  Utilities=Runtime.Safe(Next.Utilities);
   Client=Runtime.Safe(Web.Client);
   Concurrency=Runtime.Safe(Global.WebSharper.Concurrency);
   Data=Runtime.Safe(Global.WebSharper.Data);
   WBRuntime=Runtime.Safe(Data.WBRuntime);
   WorldBankRuntime=Runtime.Safe(WBRuntime.WorldBankRuntime);
   Seq=Runtime.Safe(Global.WebSharper.Seq);
+  View=Runtime.Safe(Next.View);
   Collections=Runtime.Safe(Global.WebSharper.Collections);
+  FSharpMap=Runtime.Safe(Collections.FSharpMap);
   ResizeArray=Runtime.Safe(Collections.ResizeArray);
   ResizeArrayProxy=Runtime.Safe(ResizeArray.ResizeArrayProxy);
   JavaScript=Runtime.Safe(Global.WebSharper.JavaScript);
   JSModule=Runtime.Safe(JavaScript.JSModule);
-  AttrModule=Runtime.Safe(Next.AttrModule);
-  return Utilities=Runtime.Safe(Next.Utilities);
+  MapModule=Runtime.Safe(Collections.MapModule);
+  PrintfHelpers=Runtime.Safe(Global.WebSharper.PrintfHelpers);
+  Var=Runtime.Safe(Next.Var);
+  return AttrModule=Runtime.Safe(Next.AttrModule);
  });
  Runtime.OnLoad(function()
  {
+  Client.varMu();
+  Client.plotSelectionDoc();
+  Client.plotSelection();
   Client.data();
   Client.countries();
   Client.colors();
+  Client.charts();
+  Client.chartDiv();
   Client.Main();
   ChartingUtil.randomColor();
   return;

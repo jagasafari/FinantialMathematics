@@ -52,12 +52,26 @@ module Client =
                 |>Async.Parallel
             return data |> renderChartLinesYears
         }
-    let chartDiv' title chart = ChartingUtil.chartDiv title chart legent'
 
+    let charts = Map.empty
+                    .Add("Broad money growth (annual %)", chart0)
+                    .Add("5-bank asset concentration", chart1)
+
+    let plotSelection = charts |> Map.toList |> List.map(fun (k,_) -> k)
+    let varMu = Var.Create plotSelection.[0]
+    let plotSelectionDoc = Doc.Select [cls "form-control"] (sprintf "%A") plotSelection varMu :> Doc
+    let chartDiv' varMuValue =
+        ChartingUtil.chartDiv varMuValue (charts.[varMuValue]()) legent' :> Doc
+    let chartDiv = varMu.View |> View.Map(fun x -> div [chartDiv' x])
     let Main =
         JQuery.Of("#main").Empty().Ignore
-        Doc.Concat [
-                chartDiv' "Broad money growth (annual %)" (chart0())
-                chartDiv' "5-bank asset concentration" (chart1())
-            ]
-        |> Doc.RunById "main"
+
+        let a =
+            divc "panel-default" [
+                divc "panel-body" [
+                    div [ plotSelectionDoc ]
+                    chartDiv |> Doc.EmbedView
+                ]
+            ] :> Doc
+
+        a |> Doc.RunById "main"

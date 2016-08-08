@@ -2,7 +2,6 @@ namespace FinantialMathematics.Web
 
 open WebSharper
 open WebSharper.Charting
-open WebSharper.JQuery
 open WebSharper.UI.Next
 open WebSharper.UI.Next.Client
 open WebSharper.UI.Next.Html
@@ -26,7 +25,7 @@ module ChartingUtil =
                 .WithStrokeColor(c))
         |>Chart.Combine
         |>fun c -> Renderers.ChartJs.Render(
-                    c, Size = Size(600, 400), Config = defaultChartConfig())
+                    c, Size = Size(750, 500), Config = defaultChartConfig())
 
     let legend  (countries: string []) (colors: Color []) =
         countries
